@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Avatar } from "@/components/account/Avatar";
-import { VerifyEmailBanner } from "@/components/account/VerifyEmailBanner";
 import { useAuth } from "@/hooks/useAuth";
 
 export function AccountOverview() {
@@ -12,7 +11,6 @@ export function AccountOverview() {
 
   return (
     <div className="space-y-8">
-      <VerifyEmailBanner />
       <div className="flex items-center gap-5">
         <Avatar user={user} size={72} />
         <div>

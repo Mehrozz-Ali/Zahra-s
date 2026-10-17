@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-label="Sage suit (sample image)"><rect width="600" height="800" fill="#ebefea"/><ellipse cx="300" cy="735" rx="190" ry="14" fill="#00000012"/>
+<g fill="#8FA58A" stroke="#70816c" stroke-width="3" stroke-linejoin="round"><path d="M240 150 Q300 188 360 150 L440 200 L468 340 L418 352 L396 270 L400 500 L200 500 L204 270 L182 352 L132 340 L160 200 Z"/><path d="M212 512 L388 512 L412 722 L322 722 L300 585 L278 722 L188 722 Z"/></g>
+<g fill="none" stroke="#70816c" stroke-width="2.5" stroke-linecap="round" opacity=".45"><path d="M300 195 L300 495 M300 585 L300 715 M240 290 Q238 400 232 495" /></g>
+<path d="M262 160 Q300 188 338 160" fill="none" stroke="#cdd7ca" stroke-width="5" stroke-linecap="round"/><text x="300" y="770" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" letter-spacing="3" fill="#00000055">SAMPLE IMAGE</text></svg>

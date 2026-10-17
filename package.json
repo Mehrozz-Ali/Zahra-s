@@ -1,0 +1,19 @@
+{
+  "name": "women-clothing-store",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm --prefix client install && npm --prefix server install",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "seed:reset": "npm --prefix server run seed:reset",
+    "seed:fresh": "npm --prefix server run seed:fresh",
+    "typecheck": "npm --prefix server run typecheck && npm --prefix client run typecheck",
+    "start": "concurrently -n server,client \"npm --prefix server run start\" \"npm --prefix client run start\"",
+    "seed:prod": "npm --prefix server run seed:prod",
+    "make-admin": "npm --prefix server run make-admin --"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

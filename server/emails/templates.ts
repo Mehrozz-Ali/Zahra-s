@@ -139,7 +139,7 @@ export function orderCancelledEmail(name: string, o: OrderEmailData, opts: { by:
   const why = opts.by === "customer" ? "You cancelled this order." : opts.by === "payment-timeout" ? "The online payment was not completed in time, so the order was released." : "We had to cancel this order.";
   const money_ = opts.refunded ? `Your payment of ${money(o.total)} has been refunded to your card. It can take 5 to 10 working days to show on your statement.`
     : opts.refundPending ? `You paid ${money(o.total)} by card. We will refund it and contact you shortly; you do not need to do anything.`
-    : o.paymentMethod === "stripe" && o.paymentStatus !== "paid" ? "You were not charged." : o.paymentMethod === "cod" ? "You do not need to pay anything." : "";
+      : o.paymentMethod === "stripe" && o.paymentStatus !== "paid" ? "You were not charged." : o.paymentMethod === "cod" ? "You do not need to pay anything." : "";
   return {
     subject: `Order ${o.orderNumber} was cancelled`,
     text: `Hi ${firstName(name)},\n\nOrder ${o.orderNumber} has been cancelled. ${why}${opts.note?.trim() && opts.by === "store" ? `\nReason: ${opts.note.trim()}` : ""}\n${money_}\n\n${itemsText(o)}\n\nYou can order again any time: ${url("/shop")}${footerText}`,

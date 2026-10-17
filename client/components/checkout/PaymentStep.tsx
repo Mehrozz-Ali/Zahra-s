@@ -21,10 +21,12 @@ export function PaymentStep({ value, onChange, onBack, onNext }: PaymentStepProp
           <input type="radio" name="payment" value="cod" checked={value === "cod"} onChange={() => onChange("cod")} className="accent-rose-dark" />
           <span><span className="block font-medium">Cash on delivery</span><span className="text-sm text-stone">Pay the courier when your order arrives.</span></span>
         </label>
-        <label className={`${option} ${CARD_PAYMENTS_ENABLED ? "cursor-pointer" : "opacity-60"} ${value === "stripe" ? "border-ink" : "border-sand"}`}>
-          <input type="radio" name="payment" value="stripe" checked={value === "stripe"} disabled={!CARD_PAYMENTS_ENABLED} onChange={() => onChange("stripe")} className="accent-rose-dark" />
-          <span><span className="block font-medium">Debit or credit card</span><span className="text-sm text-stone">{CARD_PAYMENTS_ENABLED ? "Pay securely online. Your card details never touch our servers." : "Available soon."}</span></span>
+        {CARD_PAYMENTS_ENABLED && (
+        <label className={`${option} cursor-pointer ${value === "stripe" ? "border-ink" : "border-sand"}`}>
+          <input type="radio" name="payment" value="stripe" checked={value === "stripe"} onChange={() => onChange("stripe")} className="accent-rose-dark" />
+          <span><span className="block font-medium">Debit or credit card</span><span className="text-sm text-stone">Pay securely online. Your card details never touch our servers.</span></span>
         </label>
+        )}
       </fieldset>
       <div className="flex gap-3">
         <Button type="button" variant="outline" onClick={onBack} className="sm:w-auto">Back</Button>

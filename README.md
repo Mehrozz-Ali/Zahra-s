@@ -472,3 +472,14 @@ Admin status moves: `pending → confirmed | cancelled`, `confirmed → processi
 - Admin: staff roles, settings page (delivery fees, store details) and an activity log
 - Image uploads straight to Cloudinary from the browser
 - Error monitoring (for example Sentry) and uptime alerts
+
+## Deploying without your own domain (Vercel + Render, cash on delivery only)
+
+Use this when the shop is on `something.vercel.app` and the API is on `something.onrender.com`. Those are different sites, so browsers such as Safari block the login cookie. The fix is to let the shop pass API calls through:
+
+1. Deploy the API on Render (root directory `server`, build `npm install --include=dev && npm run build`, start `npm start`) with the values from `server/.env.example`. Leave all `STRIPE_*` empty: card payment is then switched off everywhere.
+2. Set `CLIENT_URL` on the API to the exact Vercel address, for example `https://my-shop.vercel.app`.
+3. In Vercel, set `NEXT_PUBLIC_API_URL=/api/v1` and `API_PROXY_TARGET=https://your-api.onrender.com`, leave `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` empty, then redeploy.
+4. In MongoDB Atlas, Network Access, allow `0.0.0.0/0` (Render's addresses change), and use a strong database password.
+
+When you later buy a domain, put the shop on `www.yourdomain` and the API on `api.yourdomain`, set `NEXT_PUBLIC_API_URL=https://api.yourdomain/api/v1`, and remove `API_PROXY_TARGET`.

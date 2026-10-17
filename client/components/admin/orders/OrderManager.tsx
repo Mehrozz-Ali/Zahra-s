@@ -3,12 +3,13 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
+import { NEXT_STATUSES, OrderStatusSelect } from "@/components/admin/orders/OrderStatusSelect";
 import { PaymentBadge } from "@/components/admin/PaymentBadge";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { DebouncedInput } from "@/components/shop/DebouncedInput";
 import { getErrorMessage } from "@/lib/errors";
 import { formatDate, formatPrice } from "@/lib/format";
-import { useGetAdminOrdersQuery } from "@/services/adminApi";
+import { useGetAdminOrdersQuery, useUpdateOrderStatusMutation } from "@/services/adminApi";
 import type { OrderStatus } from "@/types";
 import { IconAction } from "@/components/ui/IconAction";
 
@@ -26,6 +27,23 @@ export function OrderManager() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [page, setPage] = useState(1);
+  const [update] = useUpdateOrderStatusMutation();
+  const [changing, setChanging] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const changeStatus = async (id: string, orderNumber: string, next: OrderStatus) => {
+    if (next === "cancelled" && !window.confirm(`Cancel order ${orderNumber}? Stock goes back on the shelf.`)) return;
+    setChanging(id);
+    setNotice(null);
+    try {
+      const result = await update({ id, status: next }).unwrap();
+      setNotice({ ok: true, text: result.message });
+    } catch (e) {
+      setNotice({ ok: false, text: getErrorMessage(e) });
+    } finally {
+      setChanging(null);
+    }
+  };
 
   const { data, isLoading, isFetching, error, refetch } = useGetAdminOrdersQuery({
     page, ...(status && { status }), ...(q && { q }), ...(method && { paymentMethod: method }), ...(payment && { paymentStatus: payment }),
@@ -40,6 +58,8 @@ export function OrderManager() {
   return (
     <div className="space-y-6">
       <div><h1 className="font-display text-5xl">Orders</h1><p className="text-sm text-stone">Open an order to see what to pack, where it goes, and to move it along.</p></div>
+
+      {notice && <p role="status" className={clsx("p-3 text-sm", notice.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800")}>{notice.text}</p>}
 
       <div role="tablist" aria-label="Order status" className="flex flex-wrap gap-1">
         {[["" as const, "All", allCount] as const, ...STATUSES.map((s) => [s, s[0]!.toUpperCase() + s.slice(1), counts?.[s]] as const)].map(([value, label, count]) => (
@@ -77,7 +97,11 @@ export function OrderManager() {
                   <td className="px-4 py-3">{o.shippingAddress.fullName}<span className="block text-xs text-stone">{o.shippingAddress.city}, {o.shippingAddress.phone}</span></td>
                   <td className="px-4 py-3 tabular-nums">{o.itemCount}</td>
                   <td className="px-4 py-3"><PaymentBadge method={o.paymentMethod} status={o.paymentStatus} /></td>
-                  <td className="px-4 py-3"><StatusBadge status={o.orderStatus} /></td>
+                  <td className="px-4 py-3">
+                    {NEXT_STATUSES[o.orderStatus].length === 0 ? <StatusBadge status={o.orderStatus} /> : (
+                      <OrderStatusSelect id={`status-${o._id}`} label={`Status of order ${o.orderNumber}`} current={o.orderStatus} next={NEXT_STATUSES[o.orderStatus]} value={o.orderStatus} disabled={changing === o._id} onChange={(next) => changeStatus(o._id, o.orderNumber, next)} className="h-9 min-w-44" />
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-right tabular-nums">{formatPrice(o.total)}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-right"><IconAction icon="view" label={`View order ${o.orderNumber ?? ""}`.trim()} href={`/admin/orders/${o._id}`} className="ml-auto" /></td>
                 </tr>

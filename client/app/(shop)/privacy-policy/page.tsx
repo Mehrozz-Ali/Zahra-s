@@ -19,11 +19,11 @@ export default function Page() {
       sections={[
         { heading: "What we collect", body: <>
           <ul><li>Account details: your name, email address, mobile number and password. Passwords are stored in a scrambled form that we cannot read.</li><li>Delivery details: the addresses and phone numbers you give us for orders.</li><li>Order details: what you bought, when, how you paid and the status of your order.</li><li>Reviews and wishlist items you add.</li><li>Your email address if you subscribe to our newsletter.</li></ul>
-          <p>We do not store your card number. Card payments are handled by Stripe.</p></> },
+          <p>We accept cash on delivery only, so we never ask for or store your card or bank details.</p></> },
         { heading: "How we use it", body: <ul><li>To process and deliver your orders and keep you updated by email.</li><li>To manage your account, wishlist and saved cart.</li><li>To answer your questions and handle returns.</li><li>To keep the website secure and prevent fraud.</li><li>To send our newsletter, only if you subscribed. Every email lets you opt out.</li></ul> },
         { heading: "Who we share it with", body: <>
           <p>We share only what is needed with the companies that help us run the store:</p>
-          <ul><li>Delivery couriers: your name, address and phone number.</li><li>Stripe: payment details, for card payments.</li><li>Our email provider: your email address, to send messages.</li><li>Our hosting and image providers.</li></ul>
+          <ul><li>Delivery couriers: your name, address and phone number.</li><li>Our email provider: your email address, to send messages.</li><li>Our hosting and image providers.</li></ul>
           <p>We do not sell your personal information.</p></> },
         { heading: "Cookies and local storage", body: <p>We use a secure cookie to keep you logged in, and your browser&apos;s storage to remember your cart and recently viewed items on this device. We do not use advertising cookies.</p> },
         { heading: "How long we keep it", body: <p>We keep your account until you ask us to remove it. We keep order records for as long as needed for accounting, tax and returns.</p> },

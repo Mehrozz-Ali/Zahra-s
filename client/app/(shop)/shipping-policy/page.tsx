@@ -23,7 +23,7 @@ export default function Page() {
           <p>These times start when your order is confirmed, not when it is placed, and exclude Sundays and public holidays. Busy periods such as Eid can add a few days.</p></> },
         { heading: "Delivery charges", body: <>
           <p>Standard delivery costs Rs. {SITE.shippingFee.toLocaleString("en-PK")}. It is free on orders over Rs. {SITE.freeShippingOver.toLocaleString("en-PK")}. The exact charge for each delivery option is shown at checkout before you place the order.</p></> },
-        { heading: "Order processing", body: <p>Orders are packed and handed to the courier after they are confirmed. Card orders are confirmed when your payment succeeds. Cash on delivery orders are confirmed by us, and we may call you on the mobile number you gave if anything needs checking.</p> },
+        { heading: "Order processing", body: <p>Orders are packed and handed to the courier after they are confirmed. Cash on delivery orders are confirmed by us, and we may call you on the mobile number you gave if anything needs checking.</p> },
         { heading: "Tracking your order", body: <p>We email you when your order ships and again when it is delivered. You can also follow its progress any time under <Link href="/account/orders">My orders</Link>.</p> },
         { heading: "Cash on delivery", body: <p>Please keep the exact amount ready for the courier. A parcel can be refused only if you did not order it; see our <Link href="/return-policy">return policy</Link> for items you want to send back after delivery.</p> },
         { heading: "Delivery problems", body: <>

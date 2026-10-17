@@ -29,7 +29,7 @@ export default function AboutPage() {
           {SITE.name} brings together comfortable fabrics, careful finishing and designs that suit everyday life and special occasions. We started with a simple idea: women should be able to buy beautiful, well-made clothing online and trust that what arrives matches what they saw.
         </p>
         <p className="mt-4 text-lg leading-relaxed text-stone">
-          Today we deliver across Pakistan, with cash on delivery for those who prefer to pay at the door and secure card payment for those who do not.
+          Today we deliver across Pakistan, with cash on delivery, so you only pay when your order reaches your door.
         </p>
       </article>
 

@@ -2,7 +2,7 @@
 export const SITE = {
   name: "Zahra's",
   tagline: "A blend of grace, comfort and timeless fashion",
-  description: "Lawn, winter and formal suits for women. Cash on delivery and secure online payment across Pakistan.",
+  description: "Lawn, winter and formal suits for women. Cash on delivery across Pakistan.",
   announcement: "Free delivery on orders over Rs. 5,000  |  Cash on delivery available",
   freeShippingOver: 5000,
   shippingFee: 250,

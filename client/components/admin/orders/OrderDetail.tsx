@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { PaymentBadge } from "@/components/admin/PaymentBadge";
+import { OrderStatusSelect } from "@/components/admin/orders/OrderStatusSelect";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { getErrorMessage } from "@/lib/errors";
 import { formatPrice } from "@/lib/format";
@@ -25,6 +26,7 @@ export function OrderDetail({ id }: { id: string }) {
   const { data, isLoading, error, refetch } = useGetAdminOrderQuery(id, { refetchOnMountOrArgChange: true });
   const [update, { isLoading: saving }] = useUpdateOrderStatusMutation();
   const [note, setNote] = useState("");
+  const [choice, setChoice] = useState<OrderStatus | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
   if (isLoading) return <div role="status" aria-label="Loading order" className="h-96 animate-pulse bg-sand/60 motion-reduce:animate-none" />;
@@ -43,6 +45,7 @@ export function OrderDetail({ id }: { id: string }) {
     try {
       const result = await update({ id, status, note: note.trim() || undefined }).unwrap();
       setNote("");
+      setChoice(null);
       setMessage({ ok: !result.refundFailed, text: result.message });
     } catch (e) {
       setMessage({ ok: false, text: getErrorMessage(e) });
@@ -111,14 +114,14 @@ export function OrderDetail({ id }: { id: string }) {
                   <p id="status-note-hint" className="text-xs text-stone">The customer is emailed when you ship or cancel, and your note is included in that email, so write it for them. Keep internal remarks out.</p>
                   <textarea id="status-note" aria-describedby="status-note-hint" rows={2} maxLength={300} value={note} onChange={(e) => setNote(e.target.value)} className="w-full border border-sand bg-white p-2 text-sm outline-none focus:border-rose-dark" placeholder="e.g. TCS tracking 123456" />
                 </div>
-                <div className="flex flex-col gap-2">
-                  {allowedTransitions.map((s) => (
-                    <button key={s} type="button" disabled={saving} onClick={() => move(s)}
-                      className={clsx("h-11 px-4 text-sm uppercase tracking-widest disabled:opacity-60", s === "cancelled" ? "border border-red-800 text-red-800 hover:bg-red-50" : "bg-ink text-ivory hover:bg-rose-dark")}>
-                      {saving ? "Please wait..." : ACTION[s].label}
-                    </button>
-                  ))}
+                <div className="space-y-1.5">
+                  <label htmlFor="status-select" className="block text-sm">Move this order to</label>
+                  <OrderStatusSelect id="status-select" label="New order status" current={order.orderStatus} next={allowedTransitions} value={choice ?? order.orderStatus} onChange={setChoice} disabled={saving} />
                 </div>
+                <button type="button" disabled={saving || !choice || choice === order.orderStatus} onClick={() => choice && move(choice)}
+                  className={clsx("h-11 w-full px-4 text-sm uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-50", choice === "cancelled" ? "border border-red-800 text-red-800 hover:bg-red-50" : "bg-ink text-ivory hover:bg-rose-dark")}>
+                  {saving ? "Please wait..." : choice === "cancelled" ? "Cancel order" : "Update status"}
+                </button>
               </div>
             )}
           </section>

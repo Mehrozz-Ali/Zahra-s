@@ -1,7 +1,9 @@
 import { cache } from "react";
 import type { ApiSuccess, Banner, Category, LatestReview, Product, ProductFilters, ProductList, ProductListParams } from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+// With the pass-through setup (NEXT_PUBLIC_API_URL=/api/v1) the server has to call the real API address itself
+const API_URL = PUBLIC_API_URL.startsWith("/") && process.env.API_PROXY_TARGET ? `${process.env.API_PROXY_TARGET.trim().replace(/\/+$/, "")}${PUBLIC_API_URL}` : PUBLIC_API_URL;
 
 /**
  * Server-side fetch for Server Components. Returns null if the API is down, so pages can show an empty state instead of crashing.

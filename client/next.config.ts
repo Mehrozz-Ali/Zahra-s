@@ -5,6 +5,13 @@ const isProduction = process.env.NODE_ENV === "production";
 /** Pages that are private or only make sense mid-purchase. robots.txt asks crawlers to skip them; this header tells them not to index them even if they find a link. */
 const NOINDEX = ["/admin/:path*", "/account/:path*", "/auth/:path*", "/cart", "/checkout/:path*", "/wishlist"];
 
+/**
+ * Optional: pass API requests through this site (for example https://my-api.onrender.com).
+ * The browser then calls /api/v1 on the shop's own address, so login cookies are first-party and work in every browser,
+ * which matters when the shop and the API do not share a domain. Set NEXT_PUBLIC_API_URL=/api/v1 together with it.
+ */
+const apiProxyTarget = (process.env.API_PROXY_TARGET ?? "").trim().replace(/\/+$/, "");
+
 /** The API address the browser is allowed to talk to. */
 const apiOrigin = (() => {
   try {
@@ -53,6 +60,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
     formats: ["image/avif", "image/webp"],
+  },
+  async rewrites() {
+    return apiProxyTarget ? [{ source: "/api/v1/:path*", destination: `${apiProxyTarget}/api/v1/:path*` }] : [];
   },
   async headers() {
     return [

@@ -54,11 +54,16 @@ export function ArticleManager() {
     try { setMessage({ ok: true, text: await action() }); } catch (e) { setMessage({ ok: false, text: getErrorMessage(e) }); }
   };
 
-  const archive = (p: Product) => window.confirm(`Archive "${p.name}"? It will be hidden from the store, and you can restore it later.`) &&
-    run(async () => (await deleteProduct({ id: p._id }).unwrap(), `"${p.name}" was archived.`));
-  const restore = (p: Product) => run(async () => (await updateProduct({ id: p._id, changes: { status: "draft" } }).unwrap(), `"${p.name}" was restored as a draft. Edit it to make it active.`));
-  const destroy = (p: Product) => window.confirm(`Permanently delete "${p.name}"? This cannot be undone.`) &&
-    run(async () => (await deleteProduct({ id: p._id, permanent: true }).unwrap(), `"${p.name}" was deleted.`));
+  const archive = (p: Product) => window.confirm(`Archive "${p.name}"? It will disappear from the store (home page, categories, search) and nobody can order it. You can restore it any time.`) &&
+    run(async () => (await deleteProduct({ id: p._id }).unwrap(), `"${p.name}" was archived and is hidden from the store.`));
+  const restore = (p: Product) => run(async () => {
+    const back = await updateProduct({ id: p._id, changes: { status: "active" } }).unwrap();
+    return back.status === "active"
+      ? `"${p.name}" is back in the store and can be ordered again.`
+      : `"${p.name}" was restored, but it has no stock, so it stays "Out of stock" until you add stock.`;
+  });
+  const destroy = (p: Product) => window.confirm(`Permanently delete "${p.name}"?\n\nThe article, its pictures and its reviews are removed for good. This cannot be undone.\n\nTip: to only hide it for now, use Archive instead.`) &&
+    run(async () => (await deleteProduct({ id: p._id, permanent: true }).unwrap(), `"${p.name}" was deleted permanently.`));
 
   return (
     <div className="space-y-6">
@@ -110,12 +115,10 @@ export function ArticleManager() {
                           ? <IconAction icon="view" label={`View ${p.name} in the store`} href={`/product/${p.slug}`} target="_blank" />
                           : <IconAction icon="view" label="Only active articles are visible in the store" disabled />}
                         <IconAction icon="edit" label={`Edit ${p.name}`} href={`/admin/articles/${p._id}/edit`} />
-                        {p.status === "archived" ? (
-                          <>
-                            <IconAction icon="restore" label={`Restore ${p.name}`} onClick={() => restore(p)} />
-                            <IconAction icon="delete" tone="danger" label={`Delete ${p.name}`} onClick={() => destroy(p)} />
-                          </>
-                        ) : <IconAction icon="archive" tone="danger" label={`Archive ${p.name}`} onClick={() => archive(p)} />}
+                        {p.status === "archived"
+                          ? <IconAction icon="restore" label={`Restore ${p.name} to the store`} onClick={() => restore(p)} />
+                          : <IconAction icon="archive" label={`Archive ${p.name} (hide from the store)`} onClick={() => archive(p)} />}
+                        <IconAction icon="delete" tone="danger" label={`Delete ${p.name} permanently`} onClick={() => destroy(p)} />
                       </div>
                     </td>
                   </tr>

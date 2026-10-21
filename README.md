@@ -1,135 +1,130 @@
-# Zahra's: Women's Clothing Store
+# Zahra's: Women's Suits Store
 
-A full-stack online store for women's clothing, built for Pakistan: prices in PKR, `03XX` mobile numbers, Pakistani provinces and cities, cash on delivery and card payments. Shoppers browse, filter, add to cart and check out; the owner runs the shop from an admin panel (articles, categories, orders, customers, reviews, coupons, analytics).
+An online store for women's suits in Pakistan. Customers browse, add to cart and order with **cash on delivery**. The shop owner manages everything from an admin panel: articles, categories, homepage banners, orders, customers, reviews and coupons. Prices are in PKR (Rs.).
 
-> The brand name is set in `client/lib/site.ts` and `server/config/store.ts`. The logo (the Z with the plumeria flower) is `client/public/brand/zahra-mark.png`, and the header uses it through `client/components/brand/BrandLogo.tsx`.
+- **Suits only.** The shop sells suits (lawn, khaddar, three piece and similar). There are no tops, trousers, shawls or accessories.
+- **Cash on delivery only.** There are no card payments. The Stripe code is still in the project but switched off (see "Card payments").
+- **No email confirmation.** A new account works straight away. Nobody has to verify an email.
 
 ## Contents
 
 1. [Features](#features)
 2. [Tech stack](#tech-stack)
-3. [Architecture](#architecture)
-4. [Folder structure](#folder-structure)
-5. [Installation](#installation)
-6. [Environment variables](#environment-variables)
-7. [MongoDB setup](#mongodb-setup)
-8. [Cloudinary setup](#cloudinary-setup)
-9. [Stripe setup](#stripe-setup)
-10. [Email setup](#email-setup)
-11. [Redis setup](#redis-setup)
-12. [Running locally](#running-locally)
-13. [Seed the database](#seed-the-database)
-14. [Build](#build)
-15. [Production](#production)
-16. [Deployment](#deployment)
-17. [API documentation](#api-documentation)
-18. [Security](#security)
-19. [Before you launch](#before-you-launch)
-20. [Future improvements](#future-improvements)
-
----
+3. [Folder structure](#folder-structure)
+4. [Run it on your computer](#run-it-on-your-computer)
+5. [Environment variables](#environment-variables)
+6. [Seed the database (sample data and admin)](#seed-the-database)
+7. [Using the admin panel](#using-the-admin-panel)
+8. [Deployment](#deployment)
+9. [Troubleshooting](#troubleshooting)
+10. [API reference](#api-reference)
+11. [Security](#security)
+12. [Before you launch](#before-you-launch)
 
 ## Features
 
-**Shoppers**
-- Home page with featured, new, best-selling and sale articles, latest reviews and a newsletter signup
-- Shop page with search, category, price, size and sort filters, with the filters kept in the address bar
-- Article pages with the article's photos and a size pick (with live stock). Each article is one design in one colour, so shoppers only choose a size, related articles, ratings and reviews
-- Cart that works for guests and is merged into the account on login; wishlist
-- Checkout with saved addresses, standard or express delivery, coupon codes, cash on delivery or card (Stripe)
-- Account: profile and avatar, address book, order history with a status timeline, cancel an order while it is still pending and unpaid
-- Reviews, only after the article was delivered to you (one review per article, editable)
-- Email verification, password reset, order emails (placed, shipped, delivered, cancelled)
-- Policy pages (about, contact, shipping, returns, privacy, terms), SEO metadata, sitemap, `robots.txt`, structured data
+**Shop (customers)**
+- Home page with a banner slider, New arrivals, Featured collection, Best sellers, Trending now, customer reviews and newsletter signup.
+- Categories, search, filters (price, size, sale), sorting, and a product page with size choice, stock, reviews and related articles.
+- Every article has a **front picture and a back picture**. The card shows the front, and the back appears on hover.
+- Cart (kept for guests and saved for signed-in users), wishlist, coupon codes, delivery options and checkout with cash on delivery.
+- Accounts: register, sign in, forgot password, profile, address book, order history, order cancelling (only while the order is still pending).
+- Reviews, only from customers who received the article.
+- Mobile-friendly header with a side menu, and a footer with shop links, policies and contact details.
 
-**Admin**
-- Dashboard: revenue, orders, customers, low-stock and out-of-stock counts, recent orders, sales chart
-- Articles: create, edit, draft, archive, delete (an article that was ordered can only be archived); stock per size (no colour variants: one article is one design in one colour); photos of the article; featured, new-arrival, best-seller and sale flags
-- Categories: this store sells suits, so the sample categories are New Arrivals, Winter, Summer, Dresses, Two Piece, Three Piece and Sale. Add or remove them in Admin > Categories. They are dynamic, with images; a category that has articles is archived instead of deleted
-- Homepage banners: Admin -> Homepage banners. Upload one tall (4:5) picture, shown on the right of the text, and set title, text and link; up to 8, reorderable, one stays still, several slide. With none, the homepage shows a featured article instead.
-- Orders: filters, order detail with what to pack, status moves (pending, confirmed, processing, shipped, delivered, cancelled) with a note that goes into the customer's email, refunds for paid card orders on cancel
-- Customers: list, detail with order history, deactivate and reactivate accounts
-- Reviews: moderate and delete
-- Coupons: percentage or fixed, minimum order, maximum discount, dates, usage limit, on/off
-- Analytics: revenue and orders over time, top articles and categories, payment and city breakdowns (Pakistan time)
-
-**Rules the server enforces** (never trusts the browser): prices, stock, coupons, delivery fees and totals are recalculated on the server; stock is reserved atomically when an order is placed and restored on cancel; free standard delivery from Rs. 5,000 after discount, standard fee Rs. 250, express Rs. 600; unpaid card orders are cancelled after 30 minutes and the stock is released.
+**Admin panel (`/admin`)**
+- **Dashboard and analytics** with sales, orders and best-selling articles.
+- **Articles**: add or edit with several pictures (the first is the front, the next is the back), sizes with stock per size, price and discount price, and status. Stock reaching zero marks the article "Out of stock" by itself, and restocking brings it back.
+- **Archive and delete** (see [Archive, restore and delete](#archive-restore-and-delete)).
+- **Categories**: add, edit, picture, show or hide, archive.
+- **Homepage banners**: add, replace the picture, edit the text and button, reorder, show or hide (up to 8). The banner keeps one fixed size, however big the uploaded picture is.
+- **Orders**: filter and search, open an order to see what to pack and where it goes, and change its status from a **dropdown**.
+- **Customers**, **reviews** (remove any), **coupons**.
+- Action buttons use icons (view, edit, archive, restore, delete, reorder) with a tooltip.
 
 ## Tech stack
 
 | Part | Technology |
 | --- | --- |
-| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Redux Toolkit + RTK Query, React Hook Form + Zod, Lucide icons |
-| Backend | Node.js 20+, Express, TypeScript, Zod |
-| Database | MongoDB with Mongoose (MongoDB Atlas in production) |
-| Auth | JWT in an HTTP-only cookie, bcrypt password hashing |
-| Images | Cloudinary |
-| Payments | Stripe (cards) and cash on delivery |
-| Email | Nodemailer (any SMTP provider) |
-| Hosting | Vercel (client), AWS EC2 with nginx and PM2 (server), MongoDB Atlas (database) |
-
-## Architecture
-
-```text
- Browser ──► Vercel: Next.js client (shop + /admin) ──► API calls with the login cookie
-                                                           │  https://api.example.com/api/v1
-                                                           ▼
-                                   AWS EC2: nginx (HTTPS) ─► Express API (PM2, port 8000)
-                                                           │
-                          ┌────────────────┬───────────────┼──────────────┐
-                          ▼                ▼               ▼              ▼
-                    MongoDB Atlas      Cloudinary        Stripe       SMTP server
-                    (all data)         (pictures)   (card payments)    (emails)
-                                                           │
-                                  Stripe ──webhook──► /api/v1/payments/webhook
-```
-
-- The client talks to the API only through RTK Query (`client/services`). Product pages and the sitemap are rendered on the server for SEO.
-- The API is layered: `routes` (URLs and rules) → `controllers` (HTTP in and out) → `services` (business logic) → `models` (Mongoose). Input is checked by Zod schemas in `validations` before a controller runs.
-- Every response has the same shape: `{ "success": true, "message": "...", "data": {} }`, or `{ "success": false, "message": "...", "errors": [] }`.
-- Emails and the unpaid-order clean-up run inside the API process, so run **one** API instance.
+| Client (`client/`) | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Redux Toolkit + RTK Query, React Hook Form + Zod, lucide-react icons |
+| Server (`server/`) | Node.js, Express, TypeScript, Zod validation |
+| Database | MongoDB (Atlas) with Mongoose |
+| Login | JWT in an HTTP-only cookie |
+| Pictures | Cloudinary |
+| Email | Nodemailer (optional, any SMTP service) |
 
 ## Folder structure
 
-```text
+```
 women-clothing-store/
-├── client/                    Next.js app
-│   ├── app/                   Pages: (shop), account, admin, auth, sitemap, robots
-│   ├── components/            UI by area: home, shop, products, cart, checkout, account, admin, ui
-│   ├── services/              RTK Query API slices
-│   ├── store/                 Redux store and provider
-│   ├── lib/  hooks/  utils/   Helpers, site details, policy text, SEO
-│   ├── types/                 Shared TypeScript types
-│   └── public/seed/           Sample pictures used by the seed
-├── server/
-│   ├── app.ts  server.ts      Express setup and start-up
-│   ├── config/                env, database, Cloudinary, Stripe, store rules (delivery fees)
-│   ├── routes/  controllers/  services/  models/  validations/
-│   ├── middleware/            auth, admin, rate limits, CSRF origin guard, sanitising, uploads, errors
-│   ├── emails/                Email templates
-│   ├── seed/                  Seed: admin, categories, sample shop
-│   ├── scripts/               syncIndexes, cleanOrphanImages
-│   └── ecosystem.config.cjs   PM2 process file
-├── deploy/                    EC2 setup script, deploy script, nginx example
-├── .gitignore
-├── package.json               Root scripts (install:all, dev, build, seed ...)
-└── README.md
+├── client/                 Next.js website and admin panel
+│   ├── app/                Pages: (shop), account, checkout, auth, admin
+│   ├── components/         UI parts: layout, home, shop, admin, ...
+│   ├── services/           RTK Query API calls
+│   ├── lib/                Helpers, validation schemas, site details (lib/site.ts)
+│   └── public/seed/        Sample article pictures
+├── server/                 Express API
+│   ├── routes/ controllers/ services/ models/ validations/ middleware/
+│   ├── config/             Environment and database
+│   ├── seed/               Sample data and the admin account
+│   ├── api/index.ts        Entry used when the API runs on Vercel
+│   ├── server.ts           Entry used everywhere else (Render, your computer, a VPS)
+│   └── vercel.json         Vercel settings for the API
+└── deploy/                 Optional scripts for hosting on a Linux server (EC2 and nginx)
 ```
 
-## Installation
+## Run it on your computer
 
-Requirements: **Node.js 20.9 or newer**, npm, and a MongoDB database (local or Atlas).
+You need **Node.js 20.9 or newer** and a MongoDB database (a free MongoDB Atlas cluster is fine).
+
+**1. Install**
 
 ```bash
-npm run install:all
-
-cp server/.env.example server/.env          # then fill it in (see below)
-cp client/.env.example client/.env.local
+cd server && npm install
+cd ../client && npm install
 ```
 
-On Windows PowerShell use `Copy-Item server\.env.example server\.env` and `Copy-Item client\.env.example client\.env.local`.
+**2. Set up the server.** Copy `server/.env.example` to `server/.env` and fill in the values (see [Environment variables](#environment-variables)). For development, use:
 
-The smallest working setup needs only `MONGODB_URI` and `JWT_SECRET` in `server/.env`. Cloudinary, Stripe and email can be added later; without them the shop still runs (cash on delivery only, no picture uploads, no emails).
+```dotenv
+NODE_ENV=development
+CLIENT_URL=http://localhost:3000
+MONGODB_URI=<your MongoDB string, with the database name, for example .../women-clothing-store?...>
+JWT_SECRET=<any random text of 32 or more characters>
+ADMIN_EMAIL=you@example.com
+ADMIN_PASSWORD=<a strong password>
+```
+
+**3. Set up the client.** Create `client/.env.local`:
+
+```dotenv
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+```
+
+**4. Load the data (once)**
+
+```bash
+cd server
+npm run seed
+```
+
+**5. Start both** (in two terminals):
+
+```bash
+cd server && npm run dev      # API on http://localhost:8000
+cd client && npm run dev      # Website on http://localhost:3000
+```
+
+Open `http://localhost:3000`. The admin panel is at `http://localhost:3000/admin` (sign in with `ADMIN_EMAIL` and `ADMIN_PASSWORD`).
+
+The server prints `MongoDB connected: ...` and `API running ... (development)`. A line saying "SMTP is not configured" is only a warning: the shop works, it just does not send emails.
+
+### MongoDB Atlas checklist
+
+1. **Database Access**: create a user and note the password. Use letters and numbers, or URL-encode special characters (`@` becomes `%40`).
+2. **Network Access**: allow your IP. For Vercel or Render, allow `0.0.0.0/0`.
+3. **Connection string**: **Connect → Drivers → Node.js**. Put the **database name** after the host, for example `.../women-clothing-store?...`. Without a name MongoDB uses an empty database called `test`, and the shop shows no articles.
+4. If the `mongodb+srv://` string fails on your network with `queryTxt ETIMEOUT` or `querySrv ECONNREFUSED`, switch on **Legacy URI String** (Node.js driver 2.2.12 or later) in the connect dialog and use the longer `mongodb://` string with three hosts. It does not need the DNS lookups that some networks block.
 
 ## Environment variables
 
@@ -137,349 +132,193 @@ The smallest working setup needs only `MONGODB_URI` and `JWT_SECRET` in `server/
 
 | Variable | Needed | What it is |
 | --- | --- | --- |
-| `PORT` | no | API port. Default `8000` |
-| `NODE_ENV` | no | `development` or `production` |
-| `MONGODB_URI` | **yes** | MongoDB connection string |
+| `NODE_ENV` | yes | `development` on your computer, `production` when live |
+| `PORT` | no | API port, default `8000` |
+| `MONGODB_URI` | **yes** | MongoDB connection string, including the database name |
 | `JWT_SECRET` | **yes** | At least 32 random characters. Production refuses the placeholder |
-| `JWT_EXPIRES_IN` | no | Login length. Default `7d` |
-| `CLIENT_URL` | yes in production | Shop address, `https://` in production. Several can be separated by commas |
-| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | for pictures | Admin picture uploads |
-| `STRIPE_SECRET_KEY` | for cards | Secret key (`sk_...`) |
-| `STRIPE_WEBHOOK_SECRET` | with Stripe | Webhook signing secret (`whsec_...`). Required in production when Stripe is on |
-| `STRIPE_CURRENCY` | no | Default `pkr` |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | for emails | Any SMTP provider |
-| `MONGODB_DNS_SERVERS` | no | Set to `8.8.8.8,1.1.1.1` if an Atlas `mongodb+srv://` address fails with `querySrv ECONNREFUSED` |
-| `REDIS_URL` | no | Reserved; not used yet |
-| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | for the seed | First admin account. Choose your own |
-| `SEED_DEMO_PASSWORD` | no | Password of the sample customers (development only). Default `Demo@12345` |
+| `JWT_EXPIRES_IN` | no | Login length, default `7d` |
+| `CLIENT_URL` | **yes** | The website's address. Local: `http://localhost:3000`. Live: your `https://` address. A trailing `/` is removed. Several can be separated by commas |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | for pictures | Needed to upload article, category and banner pictures from the admin panel |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | no | Order and password-reset emails. For Gmail: host `smtp.gmail.com`, port `587`, and an **app password** (not your normal password) |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | for the seed | The first admin account. Remove the password afterwards |
+| `SEED_DEMO_PASSWORD` | no | Password of the sample customers (development only), default `Demo@12345` |
+| `MONGODB_DNS_SERVERS` | no | Only for `mongodb+srv://` problems on your own computer. Do not set it on a host |
+| `STRIPE_*`, `REDIS_URL` | no | Not used. Leave empty |
 
-### Client (`client/.env.local`)
+### Client (`client/.env.local`, or the hosting dashboard)
 
 | Variable | What it is |
 | --- | --- |
-| `NEXT_PUBLIC_API_URL` | API address including `/api/v1` |
-| `NEXT_PUBLIC_APP_URL` | The shop's own address (links, sitemap, share previews) |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (`pk_...`) |
+| `NEXT_PUBLIC_API_URL` | API address. Local: `http://localhost:8000/api/v1`. On Vercel with the proxy: `/api/v1` |
+| `API_PROXY_TARGET` | Vercel only: the address of your API, with no `/api/v1` and no trailing `/` (for example `https://your-api.onrender.com`) |
+| `NEXT_PUBLIC_APP_URL` | The shop's own address, used for links, the sitemap and share previews |
 
-Everything starting with `NEXT_PUBLIC_` is visible to every visitor. Never put a secret there. Never commit `.env` files (they are in `.gitignore`).
-
-## MongoDB setup
-
-**Local:** install MongoDB Community Edition and use `MONGODB_URI=mongodb://127.0.0.1:27017/women-clothing-store`.
-
-**Atlas (use this in production):**
-1. Create a free cluster at <https://www.mongodb.com/atlas>.
-2. *Database Access*: add a user with a strong password and the *readWrite* role on your database.
-3. *Network Access*: allow the **Elastic IP of your EC2 server** (not `0.0.0.0/0`). Add your own IP too if you run the seed from your laptop.
-4. *Connect → Drivers*: copy the connection string, put the user, password and database name in, and set it as `MONGODB_URI`. Percent-encode special characters in the password (`@` becomes `%40`).
-
-Indexes are created automatically when the server starts. After changing a model, run `npm --prefix server run db:sync` to bring the indexes in line.
-
-## Cloudinary setup
-
-1. Create an account at <https://cloudinary.com>.
-2. From the dashboard copy *Cloud name*, *API key* and *API secret* into the three `CLOUDINARY_*` values.
-3. Restart the API. Images go into `women-clothing-store/products`, `.../categories` and `.../avatars`. Uploads are limited to 5 MB per image.
-
-To find product images that were uploaded but never saved with an article: `npm --prefix server run images:clean` (lists them) and `npm --prefix server run images:clean -- --delete` (removes them).
-
-## Stripe setup
-
-1. Create an account at <https://stripe.com> and open *Developers → API keys* (use **test mode** first).
-2. Set `STRIPE_SECRET_KEY` (server) and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (client).
-3. Webhook, local testing with the [Stripe CLI](https://stripe.com/docs/stripe-cli):
-   ```bash
-   stripe listen --forward-to localhost:8000/api/v1/payments/webhook
-   ```
-   Copy the `whsec_...` it prints into `STRIPE_WEBHOOK_SECRET`.
-4. Webhook, production: *Developers → Webhooks → Add endpoint* with the URL `https://api.example.com/api/v1/payments/webhook` and the events `payment_intent.succeeded` and `payment_intent.payment_failed`. Copy its signing secret into `STRIPE_WEBHOOK_SECRET`.
-5. Test card: `4242 4242 4242 4242`, any future date, any CVC.
-
-Stripe must support your business country and currency (`STRIPE_CURRENCY`, default `pkr`). If your Stripe account cannot take PKR, use cash on delivery only (leave the Stripe keys empty) or ask Stripe which currency your account supports. Orders are only marked paid by the webhook, never by the browser.
-
-## Email setup
-
-Set `SMTP_HOST`, `SMTP_PORT` (587 for STARTTLS, 465 for SSL), `SMTP_USER`, `SMTP_PASSWORD` and `SMTP_FROM` (for example `"Zahra's <hello@yourdomain.com>"`). Any provider works (Brevo, Mailgun, Amazon SES, Gmail with an app password). For production use a domain you own and set up its SPF and DKIM records with the provider, or the emails land in spam.
-
-Emails are sent in the background; if sending fails, the order or sign-up still succeeds and the error is logged. With `SMTP_HOST` empty no email is sent; the full message (including verification and password-reset links) is printed in the server log instead, which is handy locally.
-
-## Redis setup
-
-Redis is **optional and not used yet**. `REDIS_URL` is accepted in the settings so a cache can be added later (see [Future improvements](#future-improvements)). You do not need Redis to run or deploy this project.
-
-## Running locally
-
-```bash
-npm run dev
-```
-
-- Site: <http://localhost:3000>
-- API: <http://localhost:8000/api/v1> (health check: <http://localhost:8000/api/v1/health>)
-- Admin panel: <http://localhost:3000/admin> (log in with the admin account from the seed)
-
-Other useful scripts: `npm run typecheck` (both projects), `npm run build`.
+Everything starting with `NEXT_PUBLIC_` is visible to every visitor, so never put a secret there. Never commit `.env` files (they are in `.gitignore`). Next.js reads these only when it starts, so restart it after a change.
 
 ## Seed the database
 
 ```bash
+cd server
 npm run seed
 ```
 
-This is safe to run again and does the following:
+Safe to run again.
 
 | What | When |
 | --- | --- |
-| Admin account from `ADMIN_EMAIL` / `ADMIN_PASSWORD` | always (skipped if those are empty) |
-| 7 categories (suits only) | always |
-| **Sample shop**: 8 customers, 38 articles with placeholder pictures, 60 orders over about 75 days in every status, reviews, 6 coupons, 6 newsletter subscribers | development only, once |
+| Admin account from `ADMIN_EMAIL` and `ADMIN_PASSWORD` | always (skipped if empty) |
+| Categories (suits only) | always |
+| **Sample shop**: sample customers, articles with front and back placeholder pictures, orders in every status, reviews, coupons | development only, once |
 
-Sample customers sign in with `firstname.lastname@demo.example` (for example `ayesha.khan@demo.example`) and the password `Demo@12345` (or `SEED_DEMO_PASSWORD`). One is deactivated and one is unverified, so you can see those states. Try the coupons `WELCOME10` (10% off Rs. 3,000+) and `FLAT500` (Rs. 500 off Rs. 5,000+). The pictures are generated drawings labelled "SAMPLE IMAGE"; replace them from the admin panel.
+Sample customers sign in as `firstname.lastname@demo.example` (for example `ayesha.khan@demo.example`) with the password `Demo@12345`. Try the coupons `WELCOME10` and `FLAT500`. The pictures are drawings labelled "SAMPLE IMAGE"; replace them from the admin panel.
 
-```bash
-npm run seed:reset    # removes only the sample data (customers @demo.example, DEMO- articles, their orders and reviews, sample coupons)
-npm run seed:fresh    # reset, then create the sample data again
-```
+| Command | What it does |
+| --- | --- |
+| `npm run seed:reset` | Removes only the sample data |
+| `npm run seed:fresh` | Resets, then creates the sample data again. Use this on an old database to also get the back pictures and drop the retired categories |
+| `npm run seed:prod` | After `npm run build`: creates the admin and categories only, no sample data. Use it for the live database |
+| `npm run make-admin` | Turns an existing account into an admin |
 
-The sample data is never created when `NODE_ENV=production`, and `seed:reset` is refused there. Your real admin, categories and anything you added yourself are never touched by the reset. On the server, create the admin and categories with `npm run seed:prod` (after `npm run build`).
+The sample data is never created when `NODE_ENV=production`.
 
-## Build
+## Using the admin panel
 
-```bash
-npm run build          # server (TypeScript to server/dist) and client (next build)
-```
+Sign in with the admin account and open `/admin`.
 
-## Production
+### Add an article
+**Articles → Add Article.** Fill in the name, category, price, sizes and stock. Upload the pictures: **the first picture is the front and the second is the back**. The back picture appears when a customer hovers over the card. Set the status to **Active** to show it in the store.
 
-```bash
-npm --prefix server run start       # node dist/server.js
-npm --prefix client run start       # next start
-```
+### Archive, restore and delete
 
-The server refuses to start in production if `JWT_SECRET` is still a placeholder, `CLIENT_URL` is not `https://`, or Stripe is on without a webhook secret. In production the client sends strict security headers (content security policy, HSTS).
+Each row in **Articles** has these icons:
+
+| Icon | What it does |
+| --- | --- |
+| Eye | Opens the article in the store (only for active articles) |
+| Pencil | Edit |
+| Archive box | **Archive**: hides the article everywhere (home page, categories, search, wishlists). Nobody can order it. Use this when an article is out of stock or you stop selling it for now |
+| Circular arrow (on archived rows) | **Restore**: puts the article back in the store, in its categories and on the home page, and customers can order it again. If it has no stock it shows as "Out of stock" until you add stock |
+| Red bin | **Delete permanently**: removes the article, its pictures and its reviews for good. This cannot be undone |
+
+Notes:
+- Old orders are not affected by deleting an article. Each order keeps its own copy of the name, price and picture.
+- An article that is in an order not yet delivered or cancelled cannot be deleted. Finish or cancel those orders first, or archive it.
+- Archived articles are still listed in the admin panel. Filter by **Status → Archived** to find them.
+
+### Change an order's status
+**Orders.** In the list, use the **Status** dropdown in a row, or open the order and use **Move this order to** (with an optional note) and press **Update status**. The dropdown offers only the moves that are allowed:
+
+`pending → confirmed or cancelled`, `confirmed → processing, shipped or cancelled`, `processing → shipped or cancelled`, `shipped → delivered`.
+
+Cancelling asks for a confirmation and puts the stock back. Delivered and cancelled orders cannot change again. Customers can cancel only their own orders that are still pending.
+
+### Homepage banners
+**Homepage banners.** Add a banner with a picture, headline, short text and button. Reorder with the arrow icons, show or hide with the eye icon. The picture is shown at one fixed size on the right of the banner. With no banners, the home page shows a plain welcome section instead.
+
+### How the home page sections fill
+- **New arrivals**: articles marked "New arrival".
+- **Featured collection**: articles marked "Featured".
+- **Best sellers**: articles marked "Best seller".
+- **Trending now**: the 4 most sold articles. It fills itself from orders (cancelling an order takes the sales back), and with no sales yet it shows the newest articles.
 
 ## Deployment
 
-Target: **Vercel** (client), **AWS EC2** (API), **MongoDB Atlas** (database), **Cloudinary** (pictures), **Stripe** (payments).
-
-> **Use one domain for both.** The shop at `www.example.com` (or `shop.example.com`) and the API at `api.example.com`. The login cookie is then a first-party cookie. With a `vercel.app` address talking to a different domain, Safari and some other browsers block the login cookie and nobody can sign in.
+The website (client) and the API (server) are deployed separately. The simplest setup with no custom domain is **Vercel for the website** and **Render for the API**.
 
 ### 1. Database
-Set up Atlas as in [MongoDB setup](#mongodb-setup).
+Use MongoDB Atlas. Allow `0.0.0.0/0` in **Network Access** and include the database name in `MONGODB_URI`.
 
-### 2. API on EC2
-1. Launch an **Ubuntu 22.04/24.04** instance (a `t3.small` is a good start). Security group: allow ports 22 (your IP only), 80 and 443. Do **not** open 8000. Attach an **Elastic IP** and add it to Atlas *Network Access*.
-2. In your DNS, point `api.example.com` to the Elastic IP.
-3. Connect by SSH, clone the project, run the one-time setup (installs Node 20, nginx, PM2, certbot, firewall):
-   ```bash
-   git clone <your-repo-url> women-clothing-store && cd women-clothing-store
-   bash deploy/ec2-setup.sh
-   ```
-4. Create `server/.env` with the production values:
-   ```env
-   NODE_ENV=production
-   PORT=8000
-   MONGODB_URI=mongodb+srv://...
-   JWT_SECRET=<48+ random characters>
-   CLIENT_URL=https://www.example.com
-   CLOUDINARY_...=
-   STRIPE_SECRET_KEY=sk_live_...
-   STRIPE_WEBHOOK_SECRET=whsec_...
-   SMTP_...=
-   ADMIN_EMAIL=you@yourdomain.com
-   ADMIN_PASSWORD=<a strong password>
-   ```
-   Restrict it: `chmod 600 server/.env`.
-5. Build, create the admin and categories, start:
-   ```bash
-   npm --prefix server ci && npm --prefix server run build
-   npm --prefix server run seed:prod
-   cd server && pm2 start ecosystem.config.cjs && pm2 save
-   ```
-6. nginx and HTTPS:
-   ```bash
-   sudo cp deploy/nginx/api.conf.example /etc/nginx/sites-available/wcs-api
-   sudo sed -i 's/api.example.com/api.yourdomain.com/' /etc/nginx/sites-available/wcs-api
-   sudo ln -s /etc/nginx/sites-available/wcs-api /etc/nginx/sites-enabled/
-   sudo nginx -t && sudo systemctl reload nginx
-   sudo certbot --nginx -d api.yourdomain.com
-   ```
-7. Check: `curl https://api.yourdomain.com/api/v1/health` returns `"database": "connected"`.
-8. Add the Stripe webhook ([Stripe setup](#stripe-setup)).
+### 2. API on Render
+- New **Web Service** from your GitHub repository, **Root Directory** `server`.
+- **Build command**: `npm install --include=dev && npm run build`. **Start command**: `npm start`. **Health check path**: `/api/v1/health`.
+- Environment variables: `NODE_ENV=production`, `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL=https://<your-site>.vercel.app`, the three `CLOUDINARY_*` values, and optionally `SMTP_*`.
+- A free Render service sleeps after about 15 minutes idle, so the first visit after a quiet period takes 30 to 60 seconds.
 
-**Updating later:** `bash deploy/deploy.sh` (pulls, installs, builds, syncs indexes, reloads PM2 without dropping requests). Logs: `pm2 logs wcs-api`. Restart: `pm2 restart wcs-api`.
+### 3. Website on Vercel
+- **Root Directory** `client`.
+- Environment variables: `NEXT_PUBLIC_API_URL=/api/v1` and `API_PROXY_TARGET=https://<your-api>.onrender.com` (no `/api/v1`, no trailing `/`).
+- **Redeploy** after changing variables, because Vercel reads them at build time.
 
-### 3. Client on Vercel
-1. Import the repository at <https://vercel.com/new> and set **Root Directory** to `client`.
-2. Add the environment variables: `NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api/v1`, `NEXT_PUBLIC_APP_URL=https://www.yourdomain.com`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...`.
-3. Deploy, then add `www.yourdomain.com` under *Settings → Domains* and follow the DNS instructions.
-4. Make sure `CLIENT_URL` on the server matches this exact address (add the bare domain too if it redirects: `https://www.yourdomain.com,https://yourdomain.com`), then restart the API (`pm2 restart wcs-api --update-env`).
+The website forwards `/api/v1/*` to your API, so the login cookie belongs to the website's own address. This is why login works without a custom domain.
 
-`NEXT_PUBLIC_*` values are built into the site, so redeploy the client after changing them.
+### 4. Check it
+Open `https://<your-site>.vercel.app/api/v1/health`. It should show JSON with `"success": true`. Then create the admin and categories on the live database (from your computer, with the production `MONGODB_URI` and the admin variables in `server/.env`):
 
-### 4. Go-live check
-Run [spec section 66](#before-you-launch) end to end on the live site with a Stripe test card first, then switch Stripe to live keys.
+```bash
+cd server
+npm run build
+npm run seed:prod
+```
 
-## API documentation
+Remove `ADMIN_PASSWORD` from the environment afterwards.
 
-Base URL: `/api/v1`. Responses: `{ success, message, data }` or `{ success: false, message, errors[] }`. Login is a cookie set by `/auth/login`; browsers send it automatically (`credentials: include`). **Auth**: *public*, *user* (signed in), *admin*. Admin routes need an account with the admin role.
+### API on Vercel instead of Render (optional)
+`server/api/index.ts` and `server/vercel.json` let the API run on Vercel as a second project (Root Directory `server`, the same environment variables as for Render). This is not as thoroughly tested as the Render route. On Vercel the API runs as short-lived functions: the first request after a quiet period is slower, each function keeps its own database connection (Atlas needs `0.0.0.0/0`), and a request body over about 4.5 MB is refused, so keep article pictures under 4 MB.
 
-### Health
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET | `/health` | public | API and database status |
+### Linux server (optional)
+`deploy/` has scripts and an nginx example for a VPS or EC2 server running the API with PM2.
 
-### Auth `/auth`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/register` | public | Create an account (and sign in) |
-| POST | `/login` | public | Sign in |
-| POST | `/logout` | public | Sign out |
-| GET | `/me` | user | Current user |
-| POST | `/forgot-password` | public | Email a reset link |
-| POST | `/reset-password` | public | Set a new password with the link's token |
-| POST | `/verify-email` | public | Confirm email with the link's token |
-| POST | `/resend-verification` | user | Send the verification email again |
-| PATCH | `/change-password` | user | Change password |
+## Troubleshooting
 
-### Users `/users` (all user)
-| Method | Path | Purpose |
-| --- | --- | --- |
-| PATCH | `/profile` | Update name and phone |
-| PUT / DELETE | `/avatar` | Upload or remove the profile picture |
-| POST | `/addresses` | Add an address |
-| PATCH / DELETE | `/addresses/:id` | Edit or remove an address |
+| Problem | Cause and fix |
+| --- | --- |
+| Server stays silent after "SMTP is not configured" | It is waiting for MongoDB. Wait about 10 seconds for the error, then see the Atlas checklist |
+| `queryTxt ETIMEOUT` or `querySrv ECONNREFUSED` | Your network blocks the DNS lookups for `mongodb+srv://`. Use the Legacy (`mongodb://`) string |
+| "Could not connect to any servers ... IP isn't whitelisted" | Add your IP, or `0.0.0.0/0`, in Atlas → Network Access, and wait until it is Active |
+| `bad auth : authentication failed` | Wrong database user or password in `MONGODB_URI`. Remove `<` `>` around the password, URL-encode special characters, or reset the password in Database Access |
+| Shop shows no articles | The connection string has no database name (it uses `test`), or the database is empty. Add `/women-clothing-store` after the host, then run `npm run seed` |
+| CORS error on register or login | `CLIENT_URL` does not match the website's address, or `NODE_ENV` is `production` while testing on `http://localhost`. Local needs `NODE_ENV=development` and `CLIENT_URL=http://localhost:3000` |
+| Live site: `500 FUNCTION_INVOCATION_FAILED` on the API project | A missing environment variable, a wrong Root Directory (must be `server`), or Atlas blocking Vercel. Open the project's **Logs** and read the last red line |
+| Live site shows no articles | `API_PROXY_TARGET` or `NEXT_PUBLIC_API_URL` is wrong or the site was not redeployed, or the live database is empty (add articles from the admin panel) |
+| Pictures cannot be uploaded | The Cloudinary values are missing or wrong |
+| No emails are sent | `SMTP_*` is not set. The shop works without it |
 
-### Banners `/banners`
+## API reference
 
-`GET /banners` (public, visible banners with a picture), `GET /banners/admin/all`, `POST /banners`, `PATCH /banners/:id`, `PUT /banners/reorder`, `PUT|DELETE /banners/:id/image?kind=desktop|mobile`, `DELETE /banners/:id` (admin).
+Base URL: `/api/v1`. Responses look like `{ success, message, data }`, or `{ success: false, message, errors[] }`. Login is a cookie set by `/auth/login`. **Auth** column: *public*, *user* (signed in) or *admin*.
 
-### Categories `/categories`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET | `/` | public | Active categories |
-| GET | `/:slug` | public | One category |
-| GET | `/admin/all` | admin | All, including archived |
-| POST | `/` | admin | Create |
-| PATCH | `/:id` | admin | Update |
-| PUT / DELETE | `/:id/image` | admin | Upload or remove the image |
-| DELETE | `/:id` | admin | Delete, or archive when articles use it |
+| Area | Endpoints |
+| --- | --- |
+| Health | `GET /health` |
+| Auth `/auth` | `POST /register`, `POST /login`, `POST /logout`, `GET /me`, `POST /forgot-password`, `POST /reset-password`, `PATCH /change-password` (user) |
+| Users `/users` (user) | `PATCH /profile`, `PUT\|DELETE /avatar`, `POST /addresses`, `PATCH\|DELETE /addresses/:id` |
+| Banners `/banners` | `GET /` (public), admin: `GET /admin/all`, `POST /`, `PATCH /:id`, `PUT /reorder`, `PUT\|DELETE /:id/image`, `DELETE /:id` |
+| Categories `/categories` | `GET /`, `GET /:slug` (public), admin: `GET /admin/all`, `POST /`, `PATCH /:id`, `PUT\|DELETE /:id/image`, `DELETE /:id` |
+| Products `/products` | Public: `GET /` (with `q`, `category`, `minPrice`, `maxPrice`, `size`, `sort`, `featured`, `newArrival`, `bestSeller`, `onSale`, `page`, `limit`), `GET /filters`, `GET /:slug`, `GET /:slug/related`. Admin: `GET /admin/all`, `GET /admin/:id`, `POST /images`, `DELETE /images`, `POST /`, `PATCH /:id`, `DELETE /:id` |
+| Cart `/cart` | `POST /price` (public), `GET /`, `PUT /` (user) |
+| Wishlist `/wishlist` (user) | `GET /`, `GET /ids`, `POST /:productId`, `DELETE /:productId` |
+| Coupons `/coupons` (admin) | `GET /`, `POST /`, `PATCH /:id`, `DELETE /:id` |
+| Orders `/orders` (user) | `POST /quote`, `POST /`, `GET /`, `GET /:id`, `POST /:id/cancel` |
+| Reviews `/reviews` | `GET /latest`, `GET /product/:productId` (public), `GET /product/:productId/mine`, `POST /`, `PATCH\|DELETE /:id` (user), admin: `GET /admin/all`, `DELETE /admin/:id` |
+| Newsletter | `POST /newsletter/subscribe` (public) |
+| Admin `/admin` | `GET /dashboard`, `GET /analytics`, `GET /orders`, `GET /orders/:id`, `PATCH /orders/:id/status`, `GET /customers`, `GET /customers/:id`, `PATCH /customers/:id/status` |
 
-### Products `/products`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET | `/` | public | List with `q`, `category`, `minPrice`, `maxPrice`, `size`, `sort`, `featured`, `newArrival`, `bestSeller`, `onSale`, `page`, `limit` |
-| GET | `/filters` | public | Price range and sizes available |
-| GET | `/:slug` | public | One article |
-| GET | `/:slug/related` | public | Related articles |
-| GET | `/admin/all`, `/admin/:id` | admin | List and read, including drafts and archived |
-| POST | `/images` | admin | Upload up to 8 images (5 MB each) |
-| DELETE | `/images` | admin | Remove an uploaded image |
-| POST | `/` | admin | Create |
-| PATCH | `/:id` | admin | Update |
-| DELETE | `/:id` | admin | Archive; with `?permanent=true` delete for good (refused if it was ever ordered) |
+**Archive and delete an article:** `DELETE /products/:id` archives it (status `archived`, hidden from the store and not orderable). `DELETE /products/:id?permanent=true` removes it for good, and is refused while the article is in an order that is pending, confirmed, processing or shipped. **Restore:** `PATCH /products/:id` with `{ "status": "active" }`. An article with no stock becomes `out_of_stock` instead.
 
-### Cart `/cart`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/price` | public | Price a cart on the server (guests too) |
-| GET | `/` | user | Saved cart |
-| PUT | `/` | user | Save the cart |
+**Order status:** `PATCH /admin/orders/:id/status` with `{ "status": "...", "note": "..." }`. Allowed moves are listed under "Change an order's status".
 
-### Wishlist `/wishlist` (all user)
-`GET /`, `GET /ids`, `POST /:productId`, `DELETE /:productId`.
+The sign-up flow no longer sends a verification email. The old `/auth/verify-email` and `/auth/resend-verification` routes are still in the code but nothing uses them.
 
-### Coupons `/coupons`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET, POST | `/` | admin | List, create |
-| PATCH, DELETE | `/:id` | admin | Update, delete |
+## Card payments
 
-> Coupons are managed by admins only. Customers apply a code by sending `couponCode` to `/orders/quote` and `/orders`; the server checks it and returns the discount.
-
-### Orders `/orders` (all user)
-| Method | Path | Purpose |
-| --- | --- | --- |
-| POST | `/quote` | Totals for the cart, delivery method and coupon |
-| POST | `/` | Place an order (cash on delivery or card) |
-| GET | `/` | My orders |
-| GET | `/:id` | One of my orders |
-| POST | `/:id/cancel` | Cancel while pending and unpaid (later, contact the shop; admins can cancel and refund) |
-
-### Payments `/payments`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| POST | `/orders/:id/intent` | user | Start a Stripe payment for my order |
-| POST | `/webhook` | Stripe signature | Stripe events (`payment_intent.succeeded`, `payment_intent.payment_failed`) |
-
-### Reviews `/reviews`
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| GET | `/latest` | public | Latest reviews |
-| GET | `/product/:productId` | public | Reviews and rating summary for an article |
-| GET | `/product/:productId/mine` | user | Can I review this, and my review |
-| POST | `/` | user | Write a review (delivered purchase only) |
-| PATCH, DELETE | `/:id` | user | Edit or delete my review |
-| GET | `/admin/all` | admin | All reviews |
-| DELETE | `/admin/:id` | admin | Remove any review |
-
-### Newsletter `/newsletter`
-`POST /subscribe` (public).
-
-### Admin `/admin` (all admin)
-| Method | Path | Purpose |
-| --- | --- | --- |
-| GET | `/dashboard` | Dashboard figures |
-| GET | `/analytics` | Analytics for a date range |
-| GET | `/orders`, `/orders/:id` | Orders with filters, order detail |
-| PATCH | `/orders/:id/status` | Move an order to its next status |
-| GET | `/customers`, `/customers/:id` | Customers and detail |
-| PATCH | `/customers/:id/status` | Activate or deactivate |
-
-Admin status moves: `pending → confirmed | cancelled`, `confirmed → processing | shipped | cancelled`, `processing → shipped | cancelled`, `shipped → delivered`. A card order that is not yet paid can only be cancelled. Cancelling a paid card order refunds it through Stripe.
+The shop is cash on delivery only. The Stripe code (payment page, webhook and `STRIPE_*` settings) is still in the project but switched off, because no Stripe key is set and `CARD_PAYMENTS_ENABLED` hides the card option at checkout. To bring cards back later you would need a Stripe account, the keys, and a webhook.
 
 ## Security
 
-- **Passwords**: bcrypt (12 rounds); password rules enforced on server and client.
-- **Login**: JWT (HS256 only) in an `HttpOnly`, `Secure` cookie (`SameSite=None` in production, `Lax` locally); a password change signs out other devices; deactivated accounts are blocked on every request.
-- **Roles**: every admin route checks the admin role on the server.
-- **CSRF**: because the production cookie is cross-site, state-changing requests whose `Origin`/`Referer` is not in `CLIENT_URL` are rejected.
-- **Headers**: Helmet on the API; the client sends a content security policy, HSTS, `X-Frame-Options: DENY`, `nosniff`, a referrer policy and a permissions policy in production.
-- **CORS**: only `CLIENT_URL` origins, with credentials.
-- **Rate limits**: 300 requests per 15 minutes per IP overall; sign-in limited per IP + email and per account; registration, password reset, uploads, order placement and newsletter signups have their own, stricter limits.
-- **Input**: every body, query and URL parameter is validated with Zod; keys starting with `$` or containing `.` are removed (NoSQL injection); JSON bodies are capped at 200 KB; only JSON is accepted; uploads must be images up to 5 MB.
-- **Money**: prices, stock, discounts and totals come from the database, never from the browser; the Stripe webhook is verified by signature; orders are only marked paid by Stripe's webhook; customers never receive payment IDs.
-- **Secrets**: only in `.env` files that are git-ignored; the server refuses unsafe production settings; `NEXT_PUBLIC_*` holds no secrets. The seed takes the admin login from the environment and has no built-in real credentials.
-- **Errors**: clients get friendly messages; stack traces and internals stay in the server log.
-- Dependencies are checked with `npm audit` (no known vulnerabilities at the time of release). Re-run it regularly.
+- Passwords are hashed. Login is an HTTP-only cookie, so page scripts cannot read it.
+- Public sign-up always creates a customer. Only the seed or `make-admin` can create an admin.
+- Every admin route checks the admin role on the server. Prices, stock and totals are always calculated on the server, never trusted from the browser.
+- Input is checked with Zod, and the API is rate-limited and uses Helmet security headers.
+- Never commit `.env` files or share `JWT_SECRET`, the database password or Cloudinary secrets. If one leaks, change it.
+- Use a strong admin password, and remove `ADMIN_PASSWORD` from the hosting settings after the first seed.
 
 ## Before you launch
 
-1. Put your real shop details in `client/lib/site.ts` and `server/config/store.ts` (email, phone, address, opening hours, delivery fees). They are placeholders now.
-2. Have the policy pages (shipping, returns, privacy, terms) reviewed; they are generic text.
-3. Test the full journey with Stripe test keys, in this order: sign up, verify email, add an article in the admin (with pictures), see it in the shop, add to cart, apply a coupon, place a cash order and a card order, move the order to delivered in the admin, write a review, check the dashboard.
-4. Confirm emails are not landing in spam, and that login works in Safari.
-5. Switch Stripe to live keys last.
-
-## Future improvements
-
-- Redis cache for product lists and rate limits (needed before running more than one API instance)
-- Automated tests (unit, API and end-to-end) and a CI pipeline
-- Order tracking numbers and courier integration, invoices as PDF
-- Stock notifications ("tell me when back in stock") and abandoned-cart emails
-- Wishlist sharing, size guide per category, product Q&A
-- Urdu language support and an RTL layout
-- JazzCash / Easypaisa payments
-- Admin: staff roles, settings page (delivery fees, store details) and an activity log
-- Image uploads straight to Cloudinary from the browser
-- Error monitoring (for example Sentry) and uptime alerts
-
-## Deploying without your own domain (Vercel + Render, cash on delivery only)
-
-Use this when the shop is on `something.vercel.app` and the API is on `something.onrender.com`. Those are different sites, so browsers such as Safari block the login cookie. The fix is to let the shop pass API calls through:
-
-1. Deploy the API on Render (root directory `server`, build `npm install --include=dev && npm run build`, start `npm start`) with the values from `server/.env.example`. Leave all `STRIPE_*` empty: card payment is then switched off everywhere.
-2. Set `CLIENT_URL` on the API to the exact Vercel address, for example `https://my-shop.vercel.app`.
-3. In Vercel, set `NEXT_PUBLIC_API_URL=/api/v1` and `API_PROXY_TARGET=https://your-api.onrender.com`, leave `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` empty, then redeploy.
-4. In MongoDB Atlas, Network Access, allow `0.0.0.0/0` (Render's addresses change), and use a strong database password.
-
-When you later buy a domain, put the shop on `www.yourdomain` and the API on `api.yourdomain`, set `NEXT_PUBLIC_API_URL=https://api.yourdomain/api/v1`, and remove `API_PROXY_TARGET`.
+- [ ] Put your real contact details, address, social links and shop name in `client/lib/site.ts` and `server/config/store.ts` (they are placeholders).
+- [ ] Have the policy pages (Terms, Privacy, Shipping, Returns, About) reviewed. They are generic text and not legal advice.
+- [ ] Replace the sample pictures with real photographs: a front picture first, then a back picture for each article.
+- [ ] Delete the sample data from a live database (`npm run seed:reset`) and add your real articles.
+- [ ] Set `NODE_ENV=production`, a strong `JWT_SECRET`, and an `https://` `CLIENT_URL` on the host.
+- [ ] Configure email (`SMTP_*`) if you want customers to get order and password-reset emails.
+- [ ] Place a test order on the live site and move it through the statuses from the admin panel.
+- [ ] Add a custom domain when you have one, and then update `CLIENT_URL` and `NEXT_PUBLIC_APP_URL`.

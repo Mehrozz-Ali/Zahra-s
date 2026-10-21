@@ -165,7 +165,11 @@ export async function updateProduct(id: string, input: UpdateProductInput) {
   return product.populate("category", "name slug");
 }
 
-/** Archives by default. `permanent` deletes for good, but only if no order ever contained the article. */
+/**
+ * Archives by default (hidden from the store, can be restored). `permanent` deletes for good.
+ * Past orders keep their own copy of the name, price and picture, so old orders are not affected;
+ * only an article that is in an order still being fulfilled is protected.
+ */
 export async function deleteProduct(id: string, permanent: boolean): Promise<{ archived: boolean }> {
   const product = await findOrFail(id);
   if (!permanent) {
@@ -173,8 +177,9 @@ export async function deleteProduct(id: string, permanent: boolean): Promise<{ a
     await product.save();
     return { archived: true };
   }
-  if (await Order.exists({ "items.product": product._id })) {
-    throw ApiError.conflict("This article has been ordered, so it cannot be deleted permanently. Archive it instead.");
+  const open = await Order.countDocuments({ "items.product": product._id, orderStatus: { $in: ["pending", "confirmed", "processing", "shipped"] } });
+  if (open > 0) {
+    throw ApiError.conflict(`This article is in ${open} order${open === 1 ? "" : "s"} that ${open === 1 ? "is" : "are"} not finished yet. Finish or cancel ${open === 1 ? "it" : "them"} first, or archive the article instead.`);
   }
   await Promise.all([
     Cart.updateMany({}, { $pull: { items: { product: product._id } } }),

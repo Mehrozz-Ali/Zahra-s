@@ -19,7 +19,8 @@ An online store for women's suits in Pakistan. Customers browse, add to cart and
 9. [Troubleshooting](#troubleshooting)
 10. [API reference](#api-reference)
 11. [Security](#security)
-12. [Before you launch](#before-you-launch)
+12. [Planned improvements](#planned-improvements)
+13. [Before you launch](#before-you-launch)
 
 ## Features
 
@@ -145,15 +146,22 @@ The server prints `MongoDB connected: ...` and `API running ... (development)`. 
 | `MONGODB_DNS_SERVERS` | no | Only for `mongodb+srv://` problems on your own computer. Do not set it on a host |
 | `STRIPE_*`, `REDIS_URL` | no | Not used. Leave empty |
 
-### Client (`client/.env.local`, or the hosting dashboard)
+### Client (`client/.env.local` on your computer, the Vercel dashboard when live)
 
-| Variable | What it is |
-| --- | --- |
-| `NEXT_PUBLIC_API_URL` | API address. Local: `http://localhost:8000/api/v1`. On Vercel with the proxy: `/api/v1` |
-| `API_PROXY_TARGET` | Vercel only: the address of your API, with no `/api/v1` and no trailing `/` (for example `https://your-api.onrender.com`) |
-| `NEXT_PUBLIC_APP_URL` | The shop's own address, used for links, the sitemap and share previews |
+| Variable | On your computer | On Vercel |
+| --- | --- | --- |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8000/api/v1` | `/api/v1` (exactly, starting with a slash) |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | the website's own address, for example `https://your-site.vercel.app`. It is used for links, the sitemap and share previews |
+| `API_PROXY_TARGET` | not needed | the **backend's** address, with no `/api/v1` and no trailing `/` |
 
-Everything starting with `NEXT_PUBLIC_` is visible to every visitor, so never put a secret there. Never commit `.env` files (they are in `.gitignore`). Next.js reads these only when it starts, so restart it after a change.
+Why `/api/v1` and not the backend's full address on Vercel: `localhost` means "this computer", so a visitor's browser could never reach `localhost:8000`. With `/api/v1` the browser asks the website itself, and the website forwards the request to the backend (`API_PROXY_TARGET`). The login cookie then belongs to the website's own address, so login works in every browser.
+
+Rules for these variables:
+- A variable must never be left with an **empty value**. Either give it a value or do not add it.
+- Everything starting with `NEXT_PUBLIC_` is visible to every visitor, so never put a secret there.
+- Never commit `.env` files (they are in `.gitignore`).
+- Next.js reads them when it starts or builds, so restart it (or redeploy on Vercel) after any change.
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is not used. Leave it out.
 
 ## Seed the database
 
@@ -215,6 +223,14 @@ Cancelling asks for a confirmation and puts the stock back. Delivered and cancel
 ### Homepage banners
 **Homepage banners.** Add a banner with a picture, headline, short text and button. Reorder with the arrow icons, show or hide with the eye icon. The picture is shown at one fixed size on the right of the banner. With no banners, the home page shows a plain welcome section instead.
 
+**Where the button goes.** The form asks "Where should the banner go when clicked?" with four choices:
+- **A specific article:** pick the article from a list of your active articles. The button opens that article's page.
+- **A category:** pick a category.
+- **The whole shop.**
+- **Another link (advanced):** a page on your store (starting with `/`) or a full `https://` link.
+
+Incomplete links such as `/category` or `/product` are refused, because those pages need a name after them. If an old banner still has one of those links, it opens the shop instead of "Page not found". Edit the banner and choose the article to fix it properly.
+
 ### How the home page sections fill
 - **New arrivals**: articles marked "New arrival".
 - **Featured collection**: articles marked "Featured".
@@ -223,40 +239,89 @@ Cancelling asks for a confirmation and puts the stock back. Delivered and cancel
 
 ## Deployment
 
-The website (client) and the API (server) are deployed separately. The simplest setup with no custom domain is **Vercel for the website** and **Render for the API**.
+The website (`client/`) and the API (`server/`) are **two separate projects**. The setup used for this shop is **both on Vercel**, from the same GitHub repository, with the database on MongoDB Atlas and pictures on Cloudinary. Render for the API is described as an alternative below.
 
-### 1. Database
-Use MongoDB Atlas. Allow `0.0.0.0/0` in **Network Access** and include the database name in `MONGODB_URI`.
+### How the pieces connect
 
-### 2. API on Render
-- New **Web Service** from your GitHub repository, **Root Directory** `server`.
-- **Build command**: `npm install --include=dev && npm run build`. **Start command**: `npm start`. **Health check path**: `/api/v1/health`.
-- Environment variables: `NODE_ENV=production`, `MONGODB_URI`, `JWT_SECRET`, `CLIENT_URL=https://<your-site>.vercel.app`, the three `CLOUDINARY_*` values, and optionally `SMTP_*`.
-- A free Render service sleeps after about 15 minutes idle, so the first visit after a quiet period takes 30 to 60 seconds.
+| Link | Goes into | Variable |
+| --- | --- | --- |
+| Website address | the **backend** project | `CLIENT_URL` |
+| Backend address | the **website** project | `API_PROXY_TARGET` |
 
-### 3. Website on Vercel
-- **Root Directory** `client`.
-- Environment variables: `NEXT_PUBLIC_API_URL=/api/v1` and `API_PROXY_TARGET=https://<your-api>.onrender.com` (no `/api/v1`, no trailing `/`).
-- **Redeploy** after changing variables, because Vercel reads them at build time.
+Use the project's **domain** address (the short `https://<project>.vercel.app`), never a long per-deployment address, which is tied to one build and changes with every deploy.
 
-The website forwards `/api/v1/*` to your API, so the login cookie belongs to the website's own address. This is why login works without a custom domain.
+### Step 0: Prepare
+1. Push the code to GitHub (`git add .`, `git status`, `git commit`, `git push`). `git status` must not list any `.env` file.
+2. In MongoDB Atlas, **Network Access** must have `0.0.0.0/0` as Active (Vercel's addresses change). Extra entries for your own IP do no harm.
+3. `MONGODB_URI` must contain a **database name** (see the Atlas checklist above). Use the same string and the same name in every place, or two places will read two different databases.
+4. Check that `server/api/index.ts` and `server/vercel.json` exist. They let the API run on Vercel.
 
-### 4. Check it
-Open `https://<your-site>.vercel.app/api/v1/health`. It should show JSON with `"success": true`. Then create the admin and categories on the live database (from your computer, with the production `MONGODB_URI` and the admin variables in `server/.env`):
+### Step 1: Deploy the website
+1. Vercel → **Add New → Project** → import the repository.
+2. **Root Directory** `client`, framework Next.js.
+3. Environment variables: `NEXT_PUBLIC_API_URL` = `/api/v1`. Do not add `NEXT_PUBLIC_APP_URL` yet (a missing variable is fine, an empty one breaks the build).
+4. **Deploy**. When it is Ready, copy the project's address. This is the **website address**.
+5. Add `NEXT_PUBLIC_APP_URL` = the website address, then **Redeploy**.
+
+### Step 2: Deploy the backend
+1. Vercel → **Add New → Project** → import the **same** repository again, with a different project name.
+2. **Root Directory** `server`, **Framework Preset** `Other`.
+3. Environment variables (type in brackets):
+
+   | Variable | Value |
+   | --- | --- |
+   | `NODE_ENV` (plain) | `production` |
+   | `CLIENT_URL` (plain) | the website address, no trailing `/` |
+   | `MONGODB_URI` (secret) | the Atlas string with the database name |
+   | `JWT_SECRET` (secret) | 32 or more random characters |
+   | `CLOUDINARY_CLOUD_NAME` (plain) | from Cloudinary |
+   | `CLOUDINARY_API_KEY` (plain) | from Cloudinary |
+   | `CLOUDINARY_API_SECRET` (secret) | from Cloudinary |
+
+   Do not add `PORT` (Vercel ignores it), `ADMIN_EMAIL` or `ADMIN_PASSWORD` (they are only for the seed command on your computer), `STRIPE_*`, or `SMTP_*` (optional, see below).
+
+   Create a `JWT_SECRET` with: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
+4. **Deploy**. Copy the backend's **domain** address.
+5. Test `https://<backend>/api/v1/health`. It must show JSON with `"success": true`.
+
+### Step 3: Connect the website to the backend
+1. On the **website** project, add `API_PROXY_TARGET` = the backend address (no `/api/v1`, no trailing `/`).
+2. **Redeploy** the website. Vercel reads variables only when it builds.
+3. Test `https://<website>/api/v1/health`. It must show the same JSON.
+
+### Step 4: Create the admin and categories on the live database
+The live database starts empty. From your computer, put the live `MONGODB_URI`, `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `server/.env`, then in the `server` folder:
 
 ```bash
-cd server
 npm run build
 npm run seed:prod
 ```
 
-Remove `ADMIN_PASSWORD` from the environment afterwards.
+Afterwards put your local `.env` back to the development values and remove `ADMIN_PASSWORD`. Sign in at `/admin`, check the categories in the header, and add your articles.
 
-### API on Vercel instead of Render (optional)
-`server/api/index.ts` and `server/vercel.json` let the API run on Vercel as a second project (Root Directory `server`, the same environment variables as for Render). This is not as thoroughly tested as the Render route. On Vercel the API runs as short-lived functions: the first request after a quiet period is slower, each function keeps its own database connection (Atlas needs `0.0.0.0/0`), and a request body over about 4.5 MB is refused, so keep article pictures under 4 MB.
+### Step 5: Test the live shop
+Register a customer, place a cash-on-delivery order, then change its status from the admin Orders page. Add an article with a front and a back picture (each under 4 MB) and check that it shows on the home page and in its category.
+
+### Email (SMTP) can wait
+The shop works without SMTP. Emails (order confirmation, shipped, delivered, cancelled, welcome, password reset) are simply not sent, and customers cannot reset a forgotten password by themselves. To turn emails on later, add the `SMTP_*` variables to the backend project (`SMTP_PASSWORD` as secret) and **Redeploy** the backend. The confirmation email goes out when a customer places an order. Changing an order to Confirmed or Processing sends nothing.
+
+### Things to know about the API on Vercel
+- It runs as short-lived functions, so the first request after a quiet period is slower.
+- Each function keeps its own database connection (this is why Atlas needs `0.0.0.0/0`).
+- A request body over about 4.5 MB is refused, so keep article pictures under 4 MB.
+- This route is less tested than a normal always-on server. If you meet problems, Render (below) is the safer home for the API.
+
+### Alternative: the API on Render
+- New **Web Service**, **Root Directory** `server`, build command `npm install --include=dev && npm run build`, start command `npm start`, health check path `/api/v1/health`.
+- The same environment variables as above (plus `SMTP_*` if wanted).
+- A free Render service sleeps after about 15 minutes idle, so the first visit afterwards takes 30 to 60 seconds.
+- Use the Render address as `API_PROXY_TARGET` on the website project.
 
 ### Linux server (optional)
 `deploy/` has scripts and an nginx example for a VPS or EC2 server running the API with PM2.
+
+### When an address changes (for example, a custom domain)
+Update the variable on the **other** project and redeploy it: the new website address goes into `CLIENT_URL` (backend) and `NEXT_PUBLIC_APP_URL` (website); a new backend address goes into `API_PROXY_TARGET` (website).
 
 ## Troubleshooting
 
@@ -270,6 +335,12 @@ Remove `ADMIN_PASSWORD` from the environment afterwards.
 | CORS error on register or login | `CLIENT_URL` does not match the website's address, or `NODE_ENV` is `production` while testing on `http://localhost`. Local needs `NODE_ENV=development` and `CLIENT_URL=http://localhost:3000` |
 | Live site: `500 FUNCTION_INVOCATION_FAILED` on the API project | A missing environment variable, a wrong Root Directory (must be `server`), or Atlas blocking Vercel. Open the project's **Logs** and read the last red line |
 | Live site shows no articles | `API_PROXY_TARGET` or `NEXT_PUBLIC_API_URL` is wrong or the site was not redeployed, or the live database is empty (add articles from the admin panel) |
+| Vercel build fails with `Invalid URL`, `input: ''` in `app/layout.tsx` | `NEXT_PUBLIC_APP_URL` exists with an empty value. Give it the website address or delete it, then redeploy. (The code now also treats an empty value as "not set") |
+| Vercel build fails with "No Output Directory named public found" (backend) | In the backend project's Settings → General, set **Output Directory** to `dist` and redeploy |
+| The backend address opens a Vercel login page | Settings → Deployment Protection: turn it off for production |
+| A banner button shows "Page not found" | The banner link was typed as `/category`. Edit the banner and choose an article or category from the list. Old `/category` links now open the shop |
+| Live site shows no categories or articles | The live database is empty (run `npm run seed:prod`, then add articles in the admin panel), or the live `MONGODB_URI` names a different database from the one your articles are in. Check **Browse Collections** in Atlas |
+| Registration or login fails on the live site | `CLIENT_URL` on the backend does not match the website address, or `API_PROXY_TARGET` is wrong or the website was not redeployed |
 | Pictures cannot be uploaded | The Cloudinary values are missing or wrong |
 | No emails are sent | `SMTP_*` is not set. The shop works without it |
 
@@ -311,6 +382,16 @@ The shop is cash on delivery only. The Stripe code (payment page, webhook and `S
 - Input is checked with Zod, and the API is rate-limited and uses Helmet security headers.
 - Never commit `.env` files or share `JWT_SECRET`, the database password or Cloudinary secrets. If one leaks, change it.
 - Use a strong admin password, and remove `ADMIN_PASSWORD` from the hosting settings after the first seed.
+
+## Planned improvements
+
+These are ideas, **not built yet**:
+- **Courier booking with PostEx.** A "Book with PostEx" button on the admin order page that sends the order to PostEx's merchant API (it needs a PostEx merchant account, an API token and a pickup address code), saves the tracking number on the order, and shows tracking to the customer. City names at checkout would come from PostEx's list of cities. PostEx's documented endpoints include creating, tracking and listing orders, but the exact field rules should be checked against PostEx's own merchant document before building.
+- A phone-number format check and a city dropdown at checkout.
+- A notification to the owner for every new order, and an email when the admin confirms an order.
+- A "Returned" order status for refused cash-on-delivery parcels, putting the stock back.
+- A "show in Trending" option per article, bulk actions in the Articles list, low-stock alerts and an orders export.
+- Automatic tests for ordering, stock and the status rules, and error monitoring.
 
 ## Before you launch
 

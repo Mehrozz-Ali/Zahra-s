@@ -12,6 +12,6 @@ export const STORE = {
 export const BRAND = {
   name: "Zahra's",
   email: "hello@example.com", // TODO before launch: your real contact details
-  phone: "0300 0000000",
+  phone: "0306 9536999",
   returnDays: 7,
 } as const;

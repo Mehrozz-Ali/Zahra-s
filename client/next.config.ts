@@ -64,6 +64,13 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return apiProxyTarget ? [{ source: "/api/v1/:path*", destination: `${apiProxyTarget}/api/v1/:path*` }] : [];
   },
+  /** "/category" and "/product" on their own are not pages (they need a name after them). An old banner or link that points there opens the shop instead of "Page not found". */
+  async redirects() {
+    return [
+      { source: "/category", destination: "/shop", permanent: false },
+      { source: "/product", destination: "/shop", permanent: false },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

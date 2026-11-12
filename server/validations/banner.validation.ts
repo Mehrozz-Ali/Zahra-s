@@ -4,7 +4,11 @@ import { objectId, optionalText } from "./common";
 
 /** A page on this website ("/shop") or a full web address ("https://..."). Nothing else, so "javascript:" links are impossible. */
 const LINK = /^(\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/i;
-const link = z.string().trim().max(300).refine((v) => v === "" || LINK.test(v), 'Use a page like "/shop" or a full link starting with https://');
+/** "/category" and "/product" alone are not pages: they need a name after them */
+const INCOMPLETE = /^\/(category|product)\/?$/i;
+const link = z.string().trim().max(300)
+  .refine((v) => v === "" || LINK.test(v), 'Use a page like "/shop" or a full link starting with https://')
+  .refine((v) => !INCOMPLETE.test(v), "That page does not exist. Pick an article or a category instead.");
 const sortOrder = z.number().int().min(0).max(9999);
 
 const needsLinkForButton = (v: { buttonText?: string; buttonLink?: string }) => !v.buttonText || !!v.buttonLink;

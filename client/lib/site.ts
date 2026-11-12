@@ -9,9 +9,9 @@ export const SITE = {
   deliveryTime: "3-5 working days",
   returnDays: 7,
   email: "hello@example.com", // TODO before launch: your real contact details
-  phone: "0300 0000000",
+  phone: "0306 9536999",
   address: "Your shop address, area, city", // TODO before launch: shown in the footer
   hours: "Monday to Saturday, 10am to 6pm (Pakistan time)", // TODO before launch: your real support hours
-  instagramUrl: "https://www.instagram.com/",
-  facebookUrl: "https://www.facebook.com/",
+  instagramUrl: "https://www.instagram.com/zahras.us?srtk=ejRsa3N1OXpkY2Zm",
+  facebookUrl: "https://www.facebook.com/share/1JKjwPfgj4/?mibextid=wwXIfr",
 } as const;

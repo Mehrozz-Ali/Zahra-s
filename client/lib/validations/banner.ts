@@ -2,6 +2,8 @@ import { z } from "zod";
 
 // Keep these rules in sync with server/validations/banner.validation.ts
 const LINK = /^(\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/i;
+/** "/category" and "/product" alone are not pages: they need a name after them */
+const INCOMPLETE = /^\/(category|product)\/?$/i;
 
 export const bannerFormSchema = z
   .object({
@@ -9,7 +11,9 @@ export const bannerFormSchema = z
     title: z.string().trim().max(100, "Keep it under 100 characters"),
     subtitle: z.string().trim().max(200, "Keep it under 200 characters"),
     buttonText: z.string().trim().max(30, "Keep it under 30 characters"),
-    buttonLink: z.string().trim().max(300).refine((v) => v === "" || LINK.test(v), 'Use a page like "/shop" or a full link starting with https://'),
+    buttonLink: z.string().trim().max(300)
+      .refine((v) => v === "" || LINK.test(v), 'Use a page like "/shop" or a full link starting with https://')
+      .refine((v) => !INCOMPLETE.test(v), "That page does not exist. Pick an article or a category instead."),
     textTheme: z.enum(["light", "dark"]),
     isActive: z.boolean(),
   })

@@ -21,7 +21,7 @@ export function ProductSection({ title, eyebrow, href, products, tinted }: Produ
             {eyebrow && <p className="mb-1 text-xs uppercase tracking-widest text-rose-dark">{eyebrow}</p>}
             <h2 id={`${title}-heading`.replace(/\s+/g, "-")} className="font-display text-4xl sm:text-5xl">{title}</h2>
           </div>
-          <Link href={href} className="shrink-0 text-sm underline underline-offset-4 hover:text-rose-dark">View all</Link>
+          <Link href={href} className="shrink-0 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory">View all</Link>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
           {products.map((p) => <ProductCard key={p._id} product={p} />)}

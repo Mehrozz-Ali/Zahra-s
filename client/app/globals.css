@@ -12,6 +12,8 @@
 }
 
 html { scroll-behavior: smooth; }
+/* Cormorant defaults to old-style figures (3, 4, 5, 7, 9 sit below the line), which looks uneven in order numbers, prices and dates. Use lining figures wherever the display font is used. */
+.font-display { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
 body { background: var(--color-ivory); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 :focus-visible { outline: 2px solid var(--color-rose-dark); outline-offset: 3px; }
 

@@ -10,7 +10,7 @@ import { formatPrice } from "@/lib/format";
 import { useWishlistActions } from "@/hooks/useWishlist";
 import { addItem } from "@/store/slices/cartSlice";
 import type { WishlistItem } from "@/types";
-import { Trash2 } from "lucide-react";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
 
 export function WishlistCard({ item }: { item: WishlistItem }) {
   const { product, available } = item;
@@ -40,10 +40,14 @@ export function WishlistCard({ item }: { item: WishlistItem }) {
 
   return (
     <li className={clsx("flex flex-col", !available && "opacity-70")}>
-      <Link href={available ? `/product/${product.slug}` : "#"} aria-disabled={!available} tabIndex={available ? undefined : -1} className="relative block aspect-[3/4] overflow-hidden bg-sand">
-        {image && <Image src={image.url} alt={product.name} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />}
-        {!available && <span className="absolute inset-x-0 bottom-0 bg-ink/80 py-2 text-center text-xs uppercase tracking-widest text-ivory">No longer available</span>}
-      </Link>
+      <div className="relative">
+        <Link href={available ? `/product/${product.slug}` : "#"} aria-disabled={!available} tabIndex={available ? undefined : -1} className="relative block aspect-[3/4] overflow-hidden bg-sand">
+          {image && <Image src={image.url} alt={product.name} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />}
+          {!available && <span className="absolute inset-x-0 bottom-0 bg-ink/80 py-2 text-center text-xs uppercase tracking-widest text-ivory">No longer available</span>}
+        </Link>
+        {/* Filled heart: tap to take it off the wishlist */}
+        <WishlistButton productId={product._id} productName={product.name} className="absolute right-2 top-2 z-10" />
+      </div>
       <h3 className="mt-3 line-clamp-1 text-sm font-medium">{product.name}</h3>
       <p className="text-sm">{formatPrice(product.finalPrice)}{product.discountPrice !== undefined && <span className="ml-2 text-stone line-through">{formatPrice(product.price)}</span>}</p>
 
@@ -55,7 +59,6 @@ export function WishlistCard({ item }: { item: WishlistItem }) {
         ) : (
           <span className="flex h-10 items-center justify-center border border-sand text-xs uppercase tracking-widest text-stone">Sold out</span>
         ))}
-        <button type="button" onClick={removeItem} disabled={removing} aria-label={`Remove ${product.name} from wishlist`} title="Remove" className="flex h-11 w-full items-center justify-center text-red-800 hover:text-red-950 disabled:opacity-60"><Trash2 className="h-5 w-5" aria-hidden /></button>
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
       </div>
     </li>

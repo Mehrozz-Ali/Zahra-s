@@ -31,7 +31,7 @@ export function OrderDetail({ id }: { id: string }) {
     <div className="space-y-6">
       <Link href="/account/orders" className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; All orders</Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><h1 className="font-display text-4xl">{order.orderNumber}</h1><p className="text-stone">Placed {formatDate(order.createdAt)}</p></div>
+        <div><h1 className="font-sans text-2xl font-semibold tracking-tight sm:text-3xl">{order.orderNumber}</h1><p className="text-stone">Placed {formatDate(order.createdAt)}</p></div>
         <OrderStatusBadge status={order.orderStatus} />
       </div>
 

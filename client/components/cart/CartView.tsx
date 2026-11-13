@@ -30,7 +30,7 @@ export function CartView() {
   };
 
   const lines = useMemo(() => items.map(({ productId, size, quantity }) => ({ productId, size, quantity })), [items]);
-  const { data, isFetching, isError, refetch } = useGetCartPricingQuery(lines, { skip: lines.length === 0 });
+  const { data, isFetching, isError, refetch } = useGetCartPricingQuery(lines, { skip: lines.length === 0, refetchOnMountOrArgChange: true });
 
   // Apply live prices and stock from the server; tell the customer if something changed
   useEffect(() => {

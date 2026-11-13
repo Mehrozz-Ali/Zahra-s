@@ -44,7 +44,7 @@ function Form() {
       {order && (
         <div className="mt-10 space-y-6">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div><h2 className="font-display text-3xl sm:text-4xl">{order.orderNumber}</h2><p className="text-stone">Placed {formatDate(order.createdAt)}</p></div>
+            <div><h2 className="font-sans text-2xl font-semibold tracking-tight sm:text-3xl">{order.orderNumber}</h2><p className="text-stone">Placed {formatDate(order.createdAt)}</p></div>
             <OrderStatusBadge status={order.orderStatus} />
           </div>
           <section aria-labelledby="t-progress" className={card}>

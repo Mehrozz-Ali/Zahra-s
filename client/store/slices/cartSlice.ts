@@ -19,6 +19,16 @@ const lineSchema = z.object({
   unitPrice: z.number().nonnegative(), quantity: z.number().int().min(1), maxQuantity: z.number().int().min(1),
 });
 
+/** Reads the saved "buy now" article safely (null when missing or malformed). */
+export function parseStoredLine(raw: string | null): CartLine | null {
+  try {
+    const parsed = lineSchema.safeParse(raw ? JSON.parse(raw) : null);
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Reads the saved cart safely: anything malformed is dropped instead of crashing the page. */
 export function parseStoredCart(raw: string | null): CartLine[] {
   try {
@@ -30,6 +40,8 @@ export function parseStoredCart(raw: string | null): CartLine[] {
 
 interface CartState {
   items: CartLine[];
+  /** "Buy now" checks out this one article on its own, so the cart (and earlier clicks) never mix into it */
+  buyNow: CartLine | null;
   hydrated: boolean; // true once the saved cart has been loaded in the browser
 }
 
@@ -37,11 +49,20 @@ const isSame = (a: CartLine, b: Pick<CartLine, "productId" | "size">) => a.produ
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: { items: [], hydrated: false } as CartState,
+  initialState: { items: [], buyNow: null, hydrated: false } as CartState,
   reducers: {
     hydrate(state, action: PayloadAction<CartLine[]>) {
       state.items = action.payload;
       state.hydrated = true;
+    },
+    hydrateBuyNow(state, action: PayloadAction<CartLine | null>) {
+      state.buyNow = action.payload;
+    },
+    setBuyNow(state, action: PayloadAction<CartLine>) {
+      state.buyNow = action.payload; // always replaces the previous one: clicking Buy now twice never doubles the quantity
+    },
+    clearBuyNow(state) {
+      state.buyNow = null;
     },
     addItem(state, { payload }: PayloadAction<CartLine>) {
       const existing = state.items.find((i) => isSame(i, payload));
@@ -73,7 +94,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { hydrate, addItem, setQuantity, removeItem, applyPricing, clearCart } = cartSlice.actions;
+export const { hydrate, hydrateBuyNow, setBuyNow, clearBuyNow, addItem, setQuantity, removeItem, applyPricing, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
 
 export const selectCartCount = (state: { cart: CartState }): number => state.cart.items.reduce((n, i) => n + i.quantity, 0);

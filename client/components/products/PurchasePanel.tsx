@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { useAppDispatch } from "@/hooks/redux";
 import { LOW_STOCK_THRESHOLD, MAX_CART_QTY } from "@/lib/constants";
-import { addItem, type CartLine } from "@/store/slices/cartSlice";
+import { addItem, setBuyNow, type CartLine } from "@/store/slices/cartSlice";
 import type { Product, Size } from "@/types";
 
 export function PurchasePanel({ product }: { product: Product }) {
@@ -45,8 +45,8 @@ export function PurchasePanel({ product }: { product: Product }) {
   const buyNow = () => {
     const line = buildLine();
     if (!line) return;
-    dispatch(addItem(line));
-    router.push("/checkout");
+    dispatch(setBuyNow(line)); // this article only; the cart is left as it was
+    router.push("/checkout?buy=now");
   };
 
   const stockText = !size ? null : stock === 0 ? "Sold out in this size" : stock <= LOW_STOCK_THRESHOLD ? `Only ${stock} left` : "In stock";

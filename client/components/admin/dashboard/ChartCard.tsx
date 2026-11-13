@@ -17,7 +17,7 @@ export function ChartCard({ title, subtitle, table, children }: ChartCardProps) 
     <section className="viz-root min-w-0 border border-sand bg-white p-5" aria-label={title}>
       <header className="mb-4 flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-display text-2xl leading-tight">{title}</h2>
+          <h2 className="font-sans text-lg font-semibold leading-tight">{title}</h2>
           <p className="text-sm text-stone">{subtitle}</p>
         </div>
         <button type="button" onClick={() => setAsTable((v) => !v)} aria-pressed={asTable} className="shrink-0 text-sm underline underline-offset-4 hover:text-rose-dark">

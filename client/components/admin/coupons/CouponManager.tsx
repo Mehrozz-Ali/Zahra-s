@@ -36,7 +36,7 @@ export function CouponManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><h1 className="font-display text-5xl">Coupons</h1><p className="text-sm text-stone">Customers enter a code at checkout. Every rule is checked again on the server.</p></div>
+        <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Coupons</h1><p className="text-sm text-stone">Customers enter a code at checkout. Every rule is checked again on the server.</p></div>
         {!editing && <button type="button" onClick={() => { setMessage(""); setEditing("new"); }} className="bg-ink px-6 py-3 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">New coupon</button>}
       </div>
 

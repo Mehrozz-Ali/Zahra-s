@@ -31,11 +31,11 @@ export function ReviewModeration() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="font-display text-5xl">Reviews</h1><p className="text-sm text-stone">Remove reviews that are abusive or spam. Ratings update automatically.</p></div>
+      <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Reviews</h1><p className="text-sm text-stone">Remove reviews that are abusive or spam. Ratings update automatically.</p></div>
 
       {data && (
         <section aria-label="Rating summary" className="grid gap-6 border border-sand bg-white p-5 sm:grid-cols-[auto_1fr]">
-          <div><p className="font-display text-5xl tabular-nums">{data.stats.average.toFixed(1)}</p><p className="text-sm text-stone">{data.stats.total} review{data.stats.total === 1 ? "" : "s"} in total</p></div>
+          <div><p className="font-sans text-4xl font-semibold tracking-tight tabular-nums">{data.stats.average.toFixed(1)}</p><p className="text-sm text-stone">{data.stats.total} review{data.stats.total === 1 ? "" : "s"} in total</p></div>
           <ul className="min-w-0 space-y-1.5">
             {[5, 4, 3, 2, 1].map((s) => {
               const count = data.stats.distribution.find((d) => d.stars === s)?.count ?? 0;

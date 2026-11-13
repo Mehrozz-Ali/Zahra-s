@@ -19,7 +19,7 @@ import type { Product } from "@/types";
 const area = "w-full border border-sand bg-white p-4 text-base outline-none focus:border-rose-dark aria-[invalid=true]:border-red-700";
 const Section = ({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) => (
   <section className="space-y-4 border border-sand bg-white p-5">
-    <div><h2 className="font-display text-2xl">{title}</h2>{hint && <p className="text-sm text-stone">{hint}</p>}</div>
+    <div><h2 className="font-sans text-lg font-semibold">{title}</h2>{hint && <p className="text-sm text-stone">{hint}</p>}</div>
     {children}
   </section>
 );
@@ -72,7 +72,7 @@ export function ArticleForm({ product }: { product?: Product }) {
     <form onSubmit={onSubmit} noValidate className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl">{product ? "Edit article" : "Add new article"}</h1>
+          <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{product ? "Edit article" : "Add new article"}</h1>
           <p className="text-sm text-stone">{product ? `Changes are live in the store as soon as you save (${product.sku}).` : "Fill in the details, then publish. Active articles appear in the store straight away."}</p>
         </div>
         <Link href="/admin/articles" onClick={(e) => { e.preventDefault(); void cancel(); }} className="text-sm underline underline-offset-4 hover:text-rose-dark">Back to articles</Link>

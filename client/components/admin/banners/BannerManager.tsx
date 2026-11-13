@@ -41,7 +41,7 @@ export function BannerManager() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl">Homepage banners</h1>
+          <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Homepage banners</h1>
           <p className="max-w-2xl text-sm text-stone">The big pictures at the top of your homepage. With one banner it stays still; with more it slides automatically. If you have none, the homepage shows a featured article instead.</p>
         </div>
         {!editing && <button type="button" disabled={count >= MAX_BANNERS} onClick={() => { setMessage(null); setEditing("new"); }} className="bg-ink px-6 py-3 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark disabled:opacity-50">New banner</button>}

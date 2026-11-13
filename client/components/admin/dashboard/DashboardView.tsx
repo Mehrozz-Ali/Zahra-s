@@ -43,7 +43,7 @@ export function DashboardView() {
     <div className="space-y-6">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl">Dashboard</h1>
+          <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Dashboard</h1>
           <p className="text-sm text-stone">Revenue counts paid card orders and delivered cash orders. Cancelled orders are left out.</p>
         </div>
         <button type="button" onClick={() => refetch()} disabled={isFetching} className="shrink-0 text-sm underline underline-offset-4 hover:text-rose-dark disabled:opacity-60">{isFetching ? "Refreshing..." : "Refresh"}</button>
@@ -75,7 +75,7 @@ export function DashboardView() {
 
       <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
         <section aria-labelledby="recent-heading" className="min-w-0 border border-sand bg-white p-5">
-          <h2 id="recent-heading" className="mb-3 font-display text-2xl">Recent orders</h2>
+          <h2 id="recent-heading" className="mb-3 font-sans text-lg font-semibold">Recent orders</h2>
           {data.recentOrders.length === 0 ? <p className="text-sm text-stone">No orders yet.</p> : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[480px] text-left text-sm">
@@ -96,7 +96,7 @@ export function DashboardView() {
         </section>
 
         <section aria-labelledby="low-heading" className="min-w-0 border border-sand bg-white p-5">
-          <h2 id="low-heading" className="mb-3 font-display text-2xl">Needs restocking</h2>
+          <h2 id="low-heading" className="mb-3 font-sans text-lg font-semibold">Needs restocking</h2>
           {data.lowStock.length === 0 ? <p className="text-sm text-stone">Everything is well stocked.</p> : (
             <ul className="divide-y divide-sand/60">
               {data.lowStock.map((p) => (

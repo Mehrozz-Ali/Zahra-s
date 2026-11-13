@@ -68,7 +68,7 @@ export function ArticleManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><h1 className="font-display text-5xl">Article management</h1><p className="text-sm text-stone">Everything you publish here appears in the store according to its status.</p></div>
+        <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Article management</h1><p className="text-sm text-stone">Everything you publish here appears in the store according to its status.</p></div>
         <Link href="/admin/articles/create" className="bg-ink px-6 py-3 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">+ Add new article</Link>
       </div>
 

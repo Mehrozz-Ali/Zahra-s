@@ -81,7 +81,7 @@ export function BannerForm({ banner, onDone }: { banner?: Banner; onDone: (messa
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-6 border border-sand bg-white p-5">
-      <h2 className="font-display text-3xl">{banner ? "Edit banner" : "New banner"}</h2>
+      <h2 className="font-sans text-2xl font-semibold tracking-tight">{banner ? "Edit banner" : "New banner"}</h2>
 
       <BannerImageField label="Picture (shown on the right)" hint="Tall picture, about 640 x 800 px (4:5). It is always shown at this same small size next to the text, and any other shape is cropped to fit. JPG, PNG or WebP, up to 5 MB." shape="aspect-[4/5] max-w-[16rem]" currentUrl={banner?.image?.url} file={desktopFile} onFile={setDesktopFile} error={pictureError} />
 

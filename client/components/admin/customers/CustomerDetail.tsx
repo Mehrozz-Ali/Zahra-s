@@ -33,7 +33,7 @@ export function CustomerDetail({ id }: { id: string }) {
       <div>
         <Link href="/admin/customers" className="text-sm underline underline-offset-4">← All customers</Link>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="font-display text-5xl">{c.name}</h1>
+          <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{c.name}</h1>
           <span className={clsx("px-2 py-0.5 text-xs", c.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")}>{c.isActive ? "Active" : "Deactivated"}</span>
         </div>
       </div>
@@ -42,7 +42,7 @@ export function CustomerDetail({ id }: { id: string }) {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section aria-labelledby="profile" className="min-w-0 space-y-3 border border-sand bg-white p-5">
-          <h2 id="profile" className="font-display text-2xl">Profile</h2>
+          <h2 id="profile" className="font-sans text-lg font-semibold">Profile</h2>
           <dl className="space-y-2 text-sm">
             <div><dt className="text-stone">Email</dt><dd className="break-all">{c.email}</dd></div>
             <div><dt className="text-stone">Phone</dt><dd>{c.phone || "—"}</dd></div>
@@ -53,16 +53,16 @@ export function CustomerDetail({ id }: { id: string }) {
         </section>
 
         <section aria-labelledby="stats" className="min-w-0 border border-sand bg-white p-5">
-          <h2 id="stats" className="font-display text-2xl">Spending</h2>
+          <h2 id="stats" className="font-sans text-lg font-semibold">Spending</h2>
           <dl className="mt-3 grid grid-cols-2 gap-4">
-            <div><dt className="text-sm text-stone">Orders</dt><dd className="font-display text-4xl tabular-nums">{c.orderCount}</dd></div>
-            <div><dt className="text-sm text-stone">Total spent</dt><dd className="font-display text-3xl tabular-nums">{formatPrice(c.totalSpent)}</dd></div>
+            <div><dt className="text-sm text-stone">Orders</dt><dd className="font-sans text-3xl font-semibold tracking-tight tabular-nums">{c.orderCount}</dd></div>
+            <div><dt className="text-sm text-stone">Total spent</dt><dd className="font-sans text-2xl font-semibold tracking-tight tabular-nums">{formatPrice(c.totalSpent)}</dd></div>
           </dl>
           <p className="mt-3 text-xs text-stone">Counts orders that are not cancelled. Spending counts orders that are paid or delivered.</p>
         </section>
 
         <section aria-labelledby="addr" className="min-w-0 border border-sand bg-white p-5">
-          <h2 id="addr" className="font-display text-2xl">Saved addresses</h2>
+          <h2 id="addr" className="font-sans text-lg font-semibold">Saved addresses</h2>
           {c.addresses && c.addresses.length > 0 ? (
             <ul className="mt-3 space-y-3 text-sm">
               {c.addresses.map((a, i) => (
@@ -78,7 +78,7 @@ export function CustomerDetail({ id }: { id: string }) {
       </div>
 
       <section aria-labelledby="orders" className="space-y-3">
-        <h2 id="orders" className="font-display text-3xl">Recent orders</h2>
+        <h2 id="orders" className="font-sans text-2xl font-semibold tracking-tight">Recent orders</h2>
         {recentOrders.length === 0 ? <p className="border border-sand bg-white p-8 text-center text-stone">This customer has not placed an order yet.</p> : (
           <div className="relative overflow-x-auto border border-sand bg-white">
             <table className="w-full min-w-[640px] text-left text-sm">

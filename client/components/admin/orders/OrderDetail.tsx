@@ -57,7 +57,7 @@ export function OrderDetail({ id }: { id: string }) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Link href="/admin/orders" className="text-sm underline underline-offset-4 hover:text-rose-dark">All orders</Link>
-          <h1 className="mt-1 font-display text-5xl">{order.orderNumber}</h1>
+          <h1 className="mt-1 font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{order.orderNumber}</h1>
           <p className="text-sm text-stone">Placed {when(order.createdAt)}</p>
         </div>
         <div className="flex items-center gap-3"><PaymentBadge method={order.paymentMethod} status={order.paymentStatus} /><StatusBadge status={order.orderStatus} /></div>
@@ -68,7 +68,7 @@ export function OrderDetail({ id }: { id: string }) {
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0 space-y-6">
           <section aria-labelledby="items-h" className="border border-sand bg-white p-5">
-            <h2 id="items-h" className="mb-3 font-display text-2xl">Items to pack</h2>
+            <h2 id="items-h" className="mb-3 font-sans text-lg font-semibold">Items to pack</h2>
             <ul className="divide-y divide-sand/60">
               {order.items.map((i) => (
                 <li key={`${i.product}|${i.size}`} className="flex gap-4 py-3 text-sm">
@@ -92,7 +92,7 @@ export function OrderDetail({ id }: { id: string }) {
           </section>
 
           <section aria-labelledby="hist-h" className="border border-sand bg-white p-5">
-            <h2 id="hist-h" className="mb-3 font-display text-2xl">History</h2>
+            <h2 id="hist-h" className="mb-3 font-sans text-lg font-semibold">History</h2>
             <ol className="space-y-3 text-sm">
               {[...order.statusHistory].reverse().map((h, idx) => (
                 <li key={idx} className="flex gap-3"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-rose-dark" aria-hidden /><div><p><StatusBadge status={h.status} /> <span className="ml-1 text-xs text-stone">{when(h.changedAt)}</span></p>{h.note && <p className="mt-0.5 text-stone">{h.note}</p>}</div></li>
@@ -103,7 +103,7 @@ export function OrderDetail({ id }: { id: string }) {
 
         <div className="min-w-0 space-y-6">
           <section aria-labelledby="act-h" className="border border-sand bg-white p-5">
-            <h2 id="act-h" className="mb-3 font-display text-2xl">Update status</h2>
+            <h2 id="act-h" className="mb-3 font-sans text-lg font-semibold">Update status</h2>
             {allowedTransitions.length === 0 ? (
               <p className="text-sm text-stone">{order.orderStatus === "delivered" ? "This order has been delivered. Nothing more to do." : "This order was cancelled. Nothing more to do."}</p>
             ) : (
@@ -127,7 +127,7 @@ export function OrderDetail({ id }: { id: string }) {
           </section>
 
           <section aria-labelledby="cust-h" className="border border-sand bg-white p-5 text-sm">
-            <h2 id="cust-h" className="mb-3 font-display text-2xl">Customer</h2>
+            <h2 id="cust-h" className="mb-3 font-sans text-lg font-semibold">Customer</h2>
             {order.user ? (
               <>
                 <p className="font-medium"><Link href={`/admin/customers/${order.user._id}`} className="hover:text-rose-dark">{order.user.name}</Link></p>
@@ -143,7 +143,7 @@ export function OrderDetail({ id }: { id: string }) {
           </section>
 
           <section aria-labelledby="ship-h" className="border border-sand bg-white p-5 text-sm">
-            <h2 id="ship-h" className="mb-3 font-display text-2xl">Ship to</h2>
+            <h2 id="ship-h" className="mb-3 font-sans text-lg font-semibold">Ship to</h2>
             <address className="not-italic leading-relaxed">
               <p className="font-medium">{a.fullName}</p>
               <p>{a.line1}{a.line2 ? `, ${a.line2}` : ""}</p>

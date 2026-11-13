@@ -57,7 +57,7 @@ export function OrderManager() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="font-display text-5xl">Orders</h1><p className="text-sm text-stone">Open an order to see what to pack, where it goes, and to move it along.</p></div>
+      <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Orders</h1><p className="text-sm text-stone">Open an order to see what to pack, where it goes, and to move it along.</p></div>
 
       {notice && <p role="status" className={clsx("p-3 text-sm", notice.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800")}>{notice.text}</p>}
 

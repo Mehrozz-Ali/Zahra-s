@@ -49,7 +49,7 @@ export function CouponForm({ coupon, onDone }: { coupon?: Coupon; onDone: () => 
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-4 border border-sand bg-white p-5">
-      <h2 className="font-display text-3xl">{coupon ? `Edit ${coupon.code}` : "New coupon"}</h2>
+      <h2 className="font-sans text-2xl font-semibold tracking-tight">{coupon ? `Edit ${coupon.code}` : "New coupon"}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Code" error={errors.code?.message} className="h-12 w-full border border-sand bg-white px-4 text-base uppercase outline-none focus:border-rose-dark" autoCapitalize="characters" {...register("code")} />
         <div className="space-y-1.5">

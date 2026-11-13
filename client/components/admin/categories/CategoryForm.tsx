@@ -50,7 +50,7 @@ export function CategoryForm({ category, onDone }: { category?: Category; onDone
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-4 border border-sand bg-white p-5">
-      <h2 className="font-display text-3xl">{category ? `Edit ${category.name}` : "New category"}</h2>
+      <h2 className="font-sans text-2xl font-semibold tracking-tight">{category ? `Edit ${category.name}` : "New category"}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField label="Name" error={errors.name?.message} placeholder="e.g. Summer Collection" {...register("name")} />
         <FormField label="Sort order" type="number" inputMode="numeric" min={0} error={errors.sortOrder?.message} hint="Lower numbers come first" {...register("sortOrder")} />

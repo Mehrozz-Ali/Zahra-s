@@ -28,7 +28,7 @@ export function CustomerManager() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="font-display text-5xl">Customers</h1><p className="text-sm text-stone">Everyone who has registered. Deactivating blocks their account from signing in.</p></div>
+      <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Customers</h1><p className="text-sm text-stone">Everyone who has registered. Deactivating blocks their account from signing in.</p></div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1"><label htmlFor="c-search" className="block text-xs text-stone">Search</label>

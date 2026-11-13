@@ -29,7 +29,7 @@ export function CategoryManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><h1 className="font-display text-5xl">Categories</h1><p className="text-sm text-stone">Articles are placed in a category, and the store builds its menus and collections from this list.</p></div>
+        <div><h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Categories</h1><p className="text-sm text-stone">Articles are placed in a category, and the store builds its menus and collections from this list.</p></div>
         {!editing && <button type="button" onClick={() => { setMessage(null); setEditing("new"); }} className="bg-ink px-6 py-3 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">New category</button>}
       </div>
 

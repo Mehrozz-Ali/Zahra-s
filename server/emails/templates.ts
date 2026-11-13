@@ -11,18 +11,29 @@ const firstName = (name: string): string => name.trim().split(/\s+/)[0] || "ther
 const url = (path: string): string => `${env.CLIENT_URL.replace(/\/$/, "")}${path}`;
 
 const button = (href: string, label: string): string =>
-  `<p style="margin:24px 0"><a href="${escapeHtml(href)}" style="display:inline-block;background:${ROSE};color:#ffffff;padding:12px 24px;text-decoration:none;font-size:15px">${escapeHtml(label)}</a></p>`;
+  `<p style="margin:24px 0"><a class="btn" href="${escapeHtml(href)}" style="display:inline-block;background:${ROSE};color:#ffffff;padding:12px 24px;text-decoration:none;font-size:15px">${escapeHtml(label)}</a></p>`;
 const p = (html: string): string => `<p style="margin:0 0 14px;font-size:15px;line-height:1.55">${html}</p>`;
 const small = (html: string): string => `<p style="margin:0 0 10px;font-size:13px;line-height:1.5;color:${STONE}">${html}</p>`;
 
 /** One shared layout so every email looks the same. `preheader` is the grey preview text shown in the inbox list. */
 function layout(title: string, preheader: string, body: string): string {
-  return `<!doctype html><html lang="en"><body style="margin:0;background:${BG}">
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="x-apple-disable-message-reformatting"><title>${escapeHtml(title)}</title>
+<style>
+  body{margin:0;padding:0;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+  img{max-width:100%;height:auto}
+  .wrap{word-wrap:break-word;overflow-wrap:break-word}
+  @media only screen and (max-width:480px){
+    .outer{padding:16px 8px !important}
+    .card{padding:20px 16px !important}
+    .card h1{font-size:21px !important}
+    .btn{display:block !important;text-align:center !important;padding:14px 16px !important}
+  }
+</style></head><body style="margin:0;background:${BG}">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>
-<div style="background:${BG};padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:${INK}">
-  <div style="max-width:560px;margin:0 auto">
+<div class="outer wrap" style="background:${BG};padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:${INK}">
+  <div style="width:100%;max-width:560px;margin:0 auto">
     <p style="font-family:Georgia,serif;font-size:26px;margin:0 0 16px;text-align:center">${escapeHtml(BRAND.name)}</p>
-    <div style="background:#ffffff;padding:32px;border:1px solid ${SAND}">
+    <div class="card" style="background:#ffffff;padding:32px;border:1px solid ${SAND}">
       <h1 style="font-family:Georgia,serif;font-weight:500;font-size:24px;margin:0 0 18px">${escapeHtml(title)}</h1>
       ${body}
     </div>
@@ -40,9 +51,9 @@ const footerText = `\n\nQuestions? ${BRAND.email} or ${BRAND.phone}\n${BRAND.nam
 export function welcomeEmail(name: string): RenderedEmail {
   return {
     subject: `Welcome to ${BRAND.name}`,
-    text: `Hi ${firstName(name)},\n\nYour email is confirmed and your account is ready. Browse the latest collection: ${url("/shop")}${footerText}`,
+    text: `Hi ${firstName(name)},\n\nYour account is ready. Browse the latest collection: ${url("/shop")}${footerText}`,
     html: layout(`Welcome to ${BRAND.name}`, "Your account is ready.",
-      p(`Hi ${escapeHtml(firstName(name))},`) + p("Your email is confirmed and your account is ready. You can save addresses, track your orders and keep a wishlist.") + button(url("/shop"), "Start shopping")
+      p(`Hi ${escapeHtml(firstName(name))},`) + p("Your account is ready. You can save addresses, track your orders and keep a wishlist.") + button(url("/shop"), "Start shopping")
       + small(`Delivery takes ${STORE.delivery.standard.estimate}. Cash on delivery is available across Pakistan.`)),
   };
 }
@@ -83,9 +94,11 @@ export interface OrderEmailData {
   tax: number;
   total: number;
   coupon?: { code: string };
+  /** Guest orders have no account page, so links go to Track order instead */
+  isGuest?: boolean;
 }
 
-const orderUrl = (o: OrderEmailData): string => url(`/account/orders/${o._id}`);
+const orderUrl = (o: OrderEmailData): string => (o.isGuest ? url(`/track-order?order=${encodeURIComponent(o.orderNumber)}`) : url(`/account/orders/${o._id}`));
 const addressLines = (a: OrderEmailData["shippingAddress"]): string[] => [a.fullName, a.line1, ...(a.line2 ? [a.line2] : []), [a.city, a.province, a.postalCode].filter(Boolean).join(", "), a.phone];
 const deliveryLabel = (o: OrderEmailData): string => STORE.delivery[o.deliveryMethod].label;
 const paymentLine = (o: OrderEmailData): string => (o.paymentMethod === "cod" ? `Cash on delivery: please keep ${money(o.total)} ready.` : "Paid online by card. Thank you.");
@@ -139,7 +152,7 @@ export function orderCancelledEmail(name: string, o: OrderEmailData, opts: { by:
   const why = opts.by === "customer" ? "You cancelled this order." : opts.by === "payment-timeout" ? "The online payment was not completed in time, so the order was released." : "We had to cancel this order.";
   const money_ = opts.refunded ? `Your payment of ${money(o.total)} has been refunded to your card. It can take 5 to 10 working days to show on your statement.`
     : opts.refundPending ? `You paid ${money(o.total)} by card. We will refund it and contact you shortly; you do not need to do anything.`
-      : o.paymentMethod === "stripe" && o.paymentStatus !== "paid" ? "You were not charged." : o.paymentMethod === "cod" ? "You do not need to pay anything." : "";
+    : o.paymentMethod === "stripe" && o.paymentStatus !== "paid" ? "You were not charged." : o.paymentMethod === "cod" ? "You do not need to pay anything." : "";
   return {
     subject: `Order ${o.orderNumber} was cancelled`,
     text: `Hi ${firstName(name)},\n\nOrder ${o.orderNumber} has been cancelled. ${why}${opts.note?.trim() && opts.by === "store" ? `\nReason: ${opts.note.trim()}` : ""}\n${money_}\n\n${itemsText(o)}\n\nYou can order again any time: ${url("/shop")}${footerText}`,

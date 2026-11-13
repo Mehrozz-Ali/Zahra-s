@@ -70,7 +70,7 @@ export function CategoryForm({ category, onDone }: { category?: Category; onDone
             <div className="space-x-4 text-sm">
               <input ref={fileRef} id="cat-image" type="file" accept={IMAGE_TYPES.join(",")} className="sr-only" disabled={uploading} onChange={(e) => onFile(e.target.files?.[0])} />
               <label htmlFor="cat-image" className="inline-block cursor-pointer border border-ink px-4 py-2 hover:bg-ink hover:text-ivory has-[:focus-visible]:outline">{uploading ? "Uploading..." : image ? "Replace image" : "Upload image"}</label>
-              {image && <button type="button" aria-label="Remove image" className="inline-flex items-center gap-1.5 text-red-800 underline underline-offset-4" onClick={async () => { setImageError(""); try { await removeImage(category._id).unwrap(); setImage(undefined); } catch (e) { setImageError(getErrorMessage(e)); } }}><Trash2 className="h-4 w-4" aria-hidden />Remove</button>}
+              {image && <button type="button" aria-label="Remove image" title="Remove image" className="inline-flex h-10 w-10 items-center justify-center align-middle text-red-800" onClick={async () => { setImageError(""); try { await removeImage(category._id).unwrap(); setImage(undefined); } catch (e) { setImageError(getErrorMessage(e)); } }}><Trash2 className="h-5 w-5" aria-hidden /></button>}
             </div>
           </div>
           {imageError && <p role="alert" className="text-sm text-red-700">{imageError}</p>}

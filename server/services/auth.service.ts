@@ -15,6 +15,7 @@ export async function registerUser(input: RegisterInput) {
   if (await User.exists({ email: input.email })) throw ApiError.conflict("An account with this email already exists");
   // role is never taken from the request: public registration always creates a customer
   const user = await User.create({ name: input.name, email: input.email, password: input.password, phone: input.phone, role: "customer", isEmailVerified: true }); // no email confirmation step: the account is ready straight away
+  sendEmailInBackground(toMessage(user.email, welcomeEmail(user.name)), "welcome"); // courtesy email; never blocks or fails sign-up
   return { user, token: signToken({ id: user.id, role: user.role }) };
 }
 

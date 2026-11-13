@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Avatar } from "@/components/account/Avatar";
 import { IMAGE_TYPES, MAX_IMAGE_BYTES } from "@/lib/constants";
@@ -39,8 +40,8 @@ export function AvatarUpload() {
             {uploading ? "Uploading..." : user.avatar ? "Change photo" : "Upload photo"}
           </label>
           {user.avatar && (
-            <button type="button" disabled={removing} onClick={() => remove().unwrap().catch((e) => setError(getErrorMessage(e)))} className="px-2 text-red-800 underline underline-offset-4">
-              Remove
+            <button type="button" disabled={removing} onClick={() => remove().unwrap().catch((e) => setError(getErrorMessage(e)))} aria-label="Remove photo" title="Remove photo" className="flex h-10 w-10 items-center justify-center text-red-800 disabled:opacity-60">
+              <Trash2 className="h-5 w-5" aria-hidden />
             </button>
           )}
         </div>

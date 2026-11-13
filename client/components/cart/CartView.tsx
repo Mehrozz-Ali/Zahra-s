@@ -2,14 +2,12 @@
 
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { CartLineItem } from "@/components/cart/CartLineItem";
 import { OrderSummary } from "@/components/cart/OrderSummary";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { useAuth } from "@/hooks/useAuth";
+import { useWishlistActions } from "@/hooks/useWishlist";
 import { getErrorMessage } from "@/lib/errors";
-import { useAddToWishlistMutation } from "@/services/wishlistApi";
 import { useGetCartPricingQuery } from "@/services/cartApi";
 import { applyPricing, removeItem, setQuantity } from "@/store/slices/cartSlice";
 
@@ -17,16 +15,13 @@ export function CartView() {
   const dispatch = useAppDispatch();
   const items = useAppSelector((s) => s.cart.items);
   const hydrated = useAppSelector((s) => s.cart.hydrated);
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
-  const [addToWishlist] = useAddToWishlistMutation();
+  const { addItem: addToWishlist } = useWishlistActions();
   const [notice, setNotice] = useState<string | null>(null);
 
-  /** Saves the article to the wishlist, then takes the line out of the cart. Guests log in first. */
+  /** Saves the article to the wishlist, then takes the line out of the cart. Works without an account too. */
   const moveToWishlist = async (line: { productId: string; size: typeof items[number]["size"] }) => {
-    if (!isAuthenticated) return router.push("/auth/login?redirect=/cart");
     try {
-      await addToWishlist(line.productId).unwrap();
+      await addToWishlist(line.productId);
       dispatch(removeItem({ productId: line.productId, size: line.size }));
       setNotice("Moved to your wishlist.");
     } catch (e) {
@@ -66,7 +61,7 @@ export function CartView() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-5xl">Your cart</h1>
+      <h1 className="font-display text-4xl sm:text-5xl">Your cart</h1>
       {notice && (
         <p role="status" className="mt-4 flex items-start justify-between gap-4 bg-sand/60 p-4 text-sm">
           {notice}
@@ -78,7 +73,7 @@ export function CartView() {
           We could not confirm current prices and stock. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>
         </p>
       )}
-      <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_380px]">
+      <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
         <ul className="divide-y divide-sand border-y border-sand">
           {items.map((line, i) => (
             <CartLineItem

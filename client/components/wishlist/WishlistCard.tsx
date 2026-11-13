@@ -55,7 +55,7 @@ export function WishlistCard({ item }: { item: WishlistItem }) {
         ) : (
           <span className="flex h-10 items-center justify-center border border-sand text-xs uppercase tracking-widest text-stone">Sold out</span>
         ))}
-        <button type="button" onClick={removeItem} disabled={removing} aria-label={`Remove ${product.name} from wishlist`} className="inline-flex items-center justify-center gap-1.5 text-sm text-red-800 underline underline-offset-4 disabled:opacity-60"><Trash2 className="h-4 w-4" aria-hidden />Remove</button>
+        <button type="button" onClick={removeItem} disabled={removing} aria-label={`Remove ${product.name} from wishlist`} title="Remove" className="flex h-11 w-full items-center justify-center text-red-800 hover:text-red-950 disabled:opacity-60"><Trash2 className="h-5 w-5" aria-hidden /></button>
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
       </div>
     </li>

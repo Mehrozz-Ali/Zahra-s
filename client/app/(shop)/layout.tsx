@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 
 export default function ShopLayout({ children }: { children: ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export default function ShopLayout({ children }: { children: ReactNode }) {
       <SiteHeader />
       <main id="main">{children}</main>
       <SiteFooter />
+      <WhatsAppButton />
     </>
   );
 }

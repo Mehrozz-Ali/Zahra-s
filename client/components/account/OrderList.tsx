@@ -14,7 +14,7 @@ export function OrderList() {
   const { data, isLoading, isFetching, isError, refetch } = useGetMyOrdersQuery({ page });
 
   if (isLoading) return <div role="status" aria-label="Loading your orders" className="animate-pulse space-y-4 motion-reduce:animate-none">{[0, 1, 2].map((n) => <div key={n} className="h-32 bg-sand/60" />)}</div>;
-  if (isError || !data) return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your orders. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>;
+  if (isError || !data) return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your orders. <button type="button" onClick={() => refetch()} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>;
 
   if (data.orders.length === 0) {
     return (
@@ -45,7 +45,7 @@ export function OrderList() {
                   {shown.map((i) => <span key={`${i.product}|${i.size}`} className="relative block h-16 w-12 overflow-hidden bg-sand">{i.image && <Image src={i.image} alt={i.name} fill sizes="48px" className="object-cover" />}</span>)}
                   {o.items.length > shown.length && <span className="text-sm text-stone">+{o.items.length - shown.length} more</span>}
                 </div>
-                <div className="text-right"><p className="font-medium">{formatPrice(o.total)}</p><Link href={`/account/orders/${o._id}`} className="inline-flex items-center gap-1.5 text-sm underline underline-offset-4 hover:text-rose-dark"><Eye className="h-4 w-4" aria-hidden />View details</Link></div>
+                <div className="text-right"><p className="font-medium">{formatPrice(o.total)}</p><Link href={`/account/orders/${o._id}`} className="mt-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink"><Eye className="h-4 w-4" aria-hidden />View details</Link></div>
               </div>
             </li>
           );

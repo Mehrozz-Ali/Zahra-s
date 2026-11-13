@@ -17,7 +17,7 @@ export function CustomerDetail({ id }: { id: string }) {
   if (isLoading) return <div role="status" aria-label="Loading customer" className="h-96 animate-pulse bg-sand/60 motion-reduce:animate-none" />;
   if (error || !data) {
     const missing = typeof error === "object" && error !== null && "status" in error && error.status === 404;
-    return <p role="alert" className="bg-red-50 p-5 text-red-800">{missing ? "This customer does not exist." : getErrorMessage(error, "The customer could not be loaded.")} {missing ? <Link href="/admin/customers" className="underline underline-offset-4">Back to customers</Link> : <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>}</p>;
+    return <p role="alert" className="bg-red-50 p-5 text-red-800">{missing ? "This customer does not exist." : getErrorMessage(error, "The customer could not be loaded.")} {missing ? <Link href="/admin/customers" className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Back to customers</Link> : <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>}</p>;
   }
   const { customer: c, recentOrders } = data;
 
@@ -31,7 +31,7 @@ export function CustomerDetail({ id }: { id: string }) {
   return (
     <div className="space-y-8">
       <div>
-        <Link href="/admin/customers" className="text-sm underline underline-offset-4">← All customers</Link>
+        <Link href="/admin/customers" className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; All customers</Link>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{c.name}</h1>
           <span className={clsx("px-2 py-0.5 text-xs", c.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")}>{c.isActive ? "Active" : "Deactivated"}</span>

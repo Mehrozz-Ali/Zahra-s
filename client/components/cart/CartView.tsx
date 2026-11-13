@@ -65,12 +65,12 @@ export function CartView() {
       {notice && (
         <p role="status" className="mt-4 flex items-start justify-between gap-4 bg-sand/60 p-4 text-sm">
           {notice}
-          <button type="button" onClick={() => setNotice(null)} className="shrink-0 underline underline-offset-4">Dismiss</button>
+          <button type="button" onClick={() => setNotice(null)} className="shrink-0 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Dismiss</button>
         </p>
       )}
       {isError && (
         <p role="alert" className="mt-4 bg-red-50 p-4 text-sm text-red-800">
-          We could not confirm current prices and stock. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>
+          We could not confirm current prices and stock. <button type="button" onClick={() => refetch()} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>
         </p>
       )}
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -88,7 +88,7 @@ export function CartView() {
         </ul>
         <OrderSummary summary={data?.summary} updating={isFetching} canCheckout={canCheckout} />
       </div>
-      <p className="mt-8"><Link href="/shop" className="text-sm underline underline-offset-4 hover:text-rose-dark">Continue shopping</Link></p>
+      <p className="mt-8"><Link href="/shop" className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Continue shopping</Link></p>
     </div>
   );
 }

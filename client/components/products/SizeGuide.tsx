@@ -7,7 +7,7 @@ export function SizeGuide() {
   const dialog = useRef<HTMLDialogElement>(null);
   return (
     <>
-      <button type="button" onClick={() => dialog.current?.showModal()} className="text-sm underline underline-offset-4 hover:text-rose-dark">Size guide</button>
+      <button type="button" onClick={() => dialog.current?.showModal()} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Size guide</button>
       <dialog ref={dialog} aria-labelledby="size-guide-title" onClick={(e) => e.target === dialog.current && dialog.current.close()} className="m-auto w-[min(92vw,32rem)] border border-sand bg-ivory p-0 backdrop:bg-ink/50">
         <div className="p-6">
           <div className="mb-4 flex items-start justify-between gap-4">

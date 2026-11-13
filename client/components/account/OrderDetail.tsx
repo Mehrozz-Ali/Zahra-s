@@ -17,7 +17,7 @@ export function OrderDetail({ id }: { id: string }) {
   const [error, setError] = useState("");
 
   if (isLoading) return <p role="status" className="text-stone">Loading your order...</p>;
-  if (isError || !order) return <div><h1 className="font-display text-4xl">Order not found</h1><p className="mt-2 text-stone">We could not find this order on your account.</p><Link href="/account/orders" className="mt-4 inline-block underline underline-offset-4">Back to my orders</Link></div>;
+  if (isError || !order) return <div><h1 className="font-display text-4xl">Order not found</h1><p className="mt-2 text-stone">We could not find this order on your account.</p><Link href="/account/orders" className="mt-4 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; Back to my orders</Link></div>;
 
   const canCancel = order.orderStatus === "pending" && order.paymentStatus !== "paid";
   const onCancel = async () => {
@@ -29,7 +29,7 @@ export function OrderDetail({ id }: { id: string }) {
 
   return (
     <div className="space-y-6">
-      <Link href="/account/orders" className="text-sm text-stone underline underline-offset-4">All orders</Link>
+      <Link href="/account/orders" className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; All orders</Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div><h1 className="font-display text-4xl">{order.orderNumber}</h1><p className="text-stone">Placed {formatDate(order.createdAt)}</p></div>
         <OrderStatusBadge status={order.orderStatus} />

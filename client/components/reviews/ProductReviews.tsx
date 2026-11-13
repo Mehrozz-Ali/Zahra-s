@@ -75,8 +75,8 @@ export function ProductReviews({ productId, rating, numReviews }: { productId: s
                 <div className="space-y-2 text-sm">
                   <p className="text-stone">You reviewed this item.</p>
                   <div className="flex gap-4">
-                    <button type="button" onClick={() => setEditing(true)} className="inline-flex items-center gap-1.5 underline underline-offset-4 hover:text-rose-dark"><Pencil className="h-4 w-4" aria-hidden />Edit</button>
-                    <button type="button" onClick={onDelete} disabled={deleting} className="inline-flex items-center gap-1.5 underline underline-offset-4 hover:text-rose-dark disabled:opacity-60"><Trash2 className="h-4 w-4" aria-hidden />{deleting ? "Deleting..." : "Delete"}</button>
+                    <button type="button" onClick={() => setEditing(true)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink"><Pencil className="h-4 w-4" aria-hidden />Edit</button>
+                    <button type="button" onClick={onDelete} disabled={deleting} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink"><Trash2 className="h-4 w-4" aria-hidden />{deleting ? "Deleting..." : "Delete"}</button>
                   </div>
                   {actionError && <p role="alert" className="text-red-700">{actionError}</p>}
                 </div>
@@ -94,7 +94,7 @@ export function ProductReviews({ productId, rating, numReviews }: { productId: s
           {list.isLoading ? (
             <div className="space-y-4" aria-busy="true" aria-label="Loading reviews">{[0, 1].map((i) => <div key={i} className="h-24 animate-pulse bg-sand/60" />)}</div>
           ) : list.isError ? (
-            <p role="alert" className="text-stone">We could not load reviews right now. <button type="button" onClick={() => list.refetch()} className="underline underline-offset-4">Try again</button></p>
+            <p role="alert" className="text-stone">We could not load reviews right now. <button type="button" onClick={() => list.refetch()} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
           ) : data && data.reviews.length > 0 ? (
             <>
               <ul className="divide-y divide-sand">
@@ -107,9 +107,9 @@ export function ProductReviews({ productId, rating, numReviews }: { productId: s
               </ul>
               {data.pagination.totalPages > 1 && (
                 <nav aria-label="Review pages" className="mt-6 flex items-center gap-4 text-sm">
-                  <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Previous</button>
+                  <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Previous</button>
                   <span className="text-stone">Page {data.pagination.page} of {data.pagination.totalPages}</span>
-                  <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Next</button>
+                  <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Next</button>
                 </nav>
               )}
             </>

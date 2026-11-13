@@ -14,7 +14,7 @@ export function ArticleEditor({ id }: { id: string }) {
     return (
       <div role="alert" className="bg-red-50 p-5 text-red-800">
         {missing ? "This article does not exist." : getErrorMessage(error, "The article could not be loaded.")}{" "}
-        {missing ? <Link href="/admin/articles" className="underline underline-offset-4">Back to articles</Link> : <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>}
+        {missing ? <Link href="/admin/articles" className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Back to articles</Link> : <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>}
       </div>
     );
   }

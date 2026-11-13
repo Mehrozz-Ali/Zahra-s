@@ -72,7 +72,7 @@ export function ArticleManager() {
         <Link href="/admin/articles/create" className="bg-ink px-6 py-3 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">+ Add new article</Link>
       </div>
 
-      {message && <p role={message.ok ? "status" : "alert"} className={clsx("flex items-start justify-between gap-4 p-3 text-sm", message.ok ? "bg-green-50 text-green-900" : "bg-red-50 text-red-800")}>{message.text}<button type="button" onClick={() => setMessage(null)} className="shrink-0 underline underline-offset-4">Dismiss</button></p>}
+      {message && <p role={message.ok ? "status" : "alert"} className={clsx("flex items-start justify-between gap-4 p-3 text-sm", message.ok ? "bg-green-50 text-green-900" : "bg-red-50 text-red-800")}>{message.text}<button type="button" onClick={() => setMessage(null)} className="shrink-0 inline-flex h-9 items-center border border-current px-3">Dismiss</button></p>}
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1"><label htmlFor="article-search" className="block text-xs text-stone">Search articles</label>
@@ -86,11 +86,11 @@ export function ArticleManager() {
       </div>
 
       {isLoading ? <div role="status" aria-label="Loading articles" className="h-64 animate-pulse bg-sand/60 motion-reduce:animate-none" /> : error || !data ? (
-        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Articles could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Articles could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : data.products.length === 0 ? (
         <div className="border border-sand bg-white p-10 text-center">
           <p className="text-stone">{q || category || status || stock !== "all" ? "No articles match these filters." : "No articles yet."}</p>
-          {!(q || category || status || stock !== "all") && <Link href="/admin/articles/create" className="mt-3 inline-block underline underline-offset-4">Add your first article</Link>}
+          {!(q || category || status || stock !== "all") && <Link href="/admin/articles/create" className="mt-3 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Add your first article</Link>}
         </div>
       ) : (
         <div className={clsx("relative overflow-x-auto border border-sand bg-white", isFetching && "opacity-70")}>
@@ -131,9 +131,9 @@ export function ArticleManager() {
 
       {data && data.pagination.totalPages > 1 && (
         <nav aria-label="Article pages" className="flex items-center gap-4 text-sm">
-          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Previous</button>
+          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Previous</button>
           <span className="text-stone">Page {data.pagination.page} of {data.pagination.totalPages} ({data.pagination.total} articles)</span>
-          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Next</button>
+          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Next</button>
         </nav>
       )}
     </div>

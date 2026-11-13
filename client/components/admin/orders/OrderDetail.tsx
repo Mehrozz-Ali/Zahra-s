@@ -32,7 +32,7 @@ export function OrderDetail({ id }: { id: string }) {
   if (isLoading) return <div role="status" aria-label="Loading order" className="h-96 animate-pulse bg-sand/60 motion-reduce:animate-none" />;
   if (error || !data) {
     const missing = typeof error === "object" && error !== null && "status" in error && error.status === 404;
-    return <p role="alert" className="bg-red-50 p-5 text-red-800">{missing ? "This order does not exist." : getErrorMessage(error, "The order could not be loaded.")} {missing ? <Link href="/admin/orders" className="underline underline-offset-4">Back to orders</Link> : <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>}</p>;
+    return <p role="alert" className="bg-red-50 p-5 text-red-800">{missing ? "This order does not exist." : getErrorMessage(error, "The order could not be loaded.")} {missing ? <Link href="/admin/orders" className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Back to orders</Link> : <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>}</p>;
   }
 
   const { order, allowedTransitions, waitingForPayment } = data;
@@ -56,7 +56,7 @@ export function OrderDetail({ id }: { id: string }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href="/admin/orders" className="text-sm underline underline-offset-4 hover:text-rose-dark">All orders</Link>
+          <Link href="/admin/orders" className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; All orders</Link>
           <h1 className="mt-1 font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{order.orderNumber}</h1>
           <p className="text-sm text-stone">Placed {when(order.createdAt)}</p>
         </div>

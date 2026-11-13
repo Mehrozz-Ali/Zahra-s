@@ -75,7 +75,7 @@ export function ArticleForm({ product }: { product?: Product }) {
           <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{product ? "Edit article" : "Add new article"}</h1>
           <p className="text-sm text-stone">{product ? `Changes are live in the store as soon as you save (${product.sku}).` : "Fill in the details, then publish. Active articles appear in the store straight away."}</p>
         </div>
-        <Link href="/admin/articles" onClick={(e) => { e.preventDefault(); void cancel(); }} className="text-sm underline underline-offset-4 hover:text-rose-dark">Back to articles</Link>
+        <Link href="/admin/articles" onClick={(e) => { e.preventDefault(); void cancel(); }} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">&larr; Back to articles</Link>
       </div>
 
       {(serverError || Object.keys(errors).length > 0) && (

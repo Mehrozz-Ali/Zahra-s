@@ -37,7 +37,7 @@ export function CategoryManager() {
       {message && <p role={message.ok ? "status" : "alert"} className={clsx("p-3 text-sm", message.ok ? "bg-green-50 text-green-900" : "bg-red-50 text-red-800")}>{message.text}</p>}
 
       {isLoading ? <div role="status" aria-label="Loading categories" className="h-48 animate-pulse bg-sand/60 motion-reduce:animate-none" /> : error || !data ? (
-        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Categories could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Categories could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : data.length === 0 ? (
         <p className="border border-sand bg-white p-10 text-center text-stone">No categories yet. Create one before adding articles.</p>
       ) : (

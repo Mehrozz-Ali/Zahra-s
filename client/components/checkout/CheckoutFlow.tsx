@@ -71,7 +71,7 @@ export function CheckoutFlow() {
       <h1 className="mb-6 font-display text-5xl">Checkout</h1>
       <Stepper current={step} />
 
-      {quoteFailed && <p role="alert" className="mb-6 bg-red-50 p-4 text-sm text-red-800">We could not confirm current prices. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>}
+      {quoteFailed && <p role="alert" className="mb-6 bg-red-50 p-4 text-sm text-red-800">We could not confirm current prices. <button type="button" onClick={() => refetch()} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>}
       {cartChanged && <p role="alert" className="mb-6 bg-sand/60 p-4 text-sm">Some items in your cart have changed. <Link href="/cart" className="underline underline-offset-4">Review your cart</Link> before placing your order.</p>}
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">

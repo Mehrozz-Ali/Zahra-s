@@ -49,7 +49,7 @@ export function AnalyticsView() {
           <div className="grid gap-6 lg:grid-cols-2"><div className="h-72 bg-sand/60" /><div className="h-72 bg-sand/60" /></div>
         </div>
       ) : error || !data ? (
-        <p role="alert" className="bg-red-50 p-5 text-red-800">{getErrorMessage(error, "Analytics could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-5 text-red-800">{getErrorMessage(error, "Analytics could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : (() => {
         const { kpis } = data;
         const prev = range === "12m" ? "the previous 12 months" : `the previous ${r.label}`;

@@ -36,7 +36,7 @@ export async function ShopView({ params, basePath, heading, description, fixedCa
         <div role="alert" className="border border-sand bg-white p-10 text-center">
           <p className="font-display text-3xl">We could not load the products</p>
           <p className="mb-5 mt-2 text-stone">Please check your connection and try again.</p>
-          <Link href={withQuery(basePath, urlParams)} className="underline underline-offset-4">Try again</Link>
+          <Link href={withQuery(basePath, urlParams)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</Link>
         </div>
       ) : (
         <ShopBrowser params={urlParams} basePath={basePath} facets={facets} categories={categories} total={result.pagination.total}>
@@ -44,7 +44,7 @@ export async function ShopView({ params, basePath, heading, description, fixedCa
             <div className="border border-dashed border-sand p-12 text-center">
               <p className="font-display text-3xl">No products found</p>
               <p className="mb-5 mt-2 text-stone">Try removing a filter or searching for something else.</p>
-              <Link href={basePath} className="underline underline-offset-4">Clear filters</Link>
+              <Link href={basePath} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Clear filters</Link>
             </div>
           ) : view === "list" ? (
             <div><h2 className="sr-only">Products</h2>{result.products.map((p) => <ProductRow key={p._id} product={p} />)}</div>

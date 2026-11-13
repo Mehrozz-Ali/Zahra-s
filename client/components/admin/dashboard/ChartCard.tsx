@@ -20,7 +20,7 @@ export function ChartCard({ title, subtitle, table, children }: ChartCardProps) 
           <h2 className="font-sans text-lg font-semibold leading-tight">{title}</h2>
           <p className="text-sm text-stone">{subtitle}</p>
         </div>
-        <button type="button" onClick={() => setAsTable((v) => !v)} aria-pressed={asTable} className="shrink-0 text-sm underline underline-offset-4 hover:text-rose-dark">
+        <button type="button" onClick={() => setAsTable((v) => !v)} aria-pressed={asTable} className="shrink-0 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">
           {asTable ? "View chart" : "View as table"}
         </button>
       </header>

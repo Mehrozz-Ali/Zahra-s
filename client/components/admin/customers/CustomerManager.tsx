@@ -40,7 +40,7 @@ export function CustomerManager() {
       <div aria-live="polite">{message && <p role={message.ok ? "status" : "alert"} className={clsx("p-3 text-sm", message.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800")}>{message.text}</p>}</div>
 
       {isLoading ? <div role="status" aria-label="Loading customers" className="h-64 animate-pulse bg-sand/60 motion-reduce:animate-none" /> : error || !data ? (
-        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Customers could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Customers could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : data.customers.length === 0 ? (
         <p className="border border-sand bg-white p-10 text-center text-stone">{q || status !== "all" ? "No customers match these filters." : "No customers yet."}</p>
       ) : (
@@ -58,7 +58,7 @@ export function CustomerManager() {
                   <td className="px-4 py-3"><span className={clsx("inline-block px-2 py-0.5 text-xs", c.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")}>{c.isActive ? "Active" : "Deactivated"}</span></td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <IconAction icon="view" label={`View ${c.name}`} href={`/admin/customers/${c._id}`} className="mr-2 align-middle" />
-                    <button type="button" disabled={saving} onClick={() => toggle(c._id, c.name, !c.isActive)} className="underline underline-offset-4 hover:text-rose-dark disabled:opacity-50">{c.isActive ? "Deactivate" : "Reactivate"}</button>
+                    <button type="button" disabled={saving} onClick={() => toggle(c._id, c.name, !c.isActive)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">{c.isActive ? "Deactivate" : "Reactivate"}</button>
                   </td>
                 </tr>
               ))}
@@ -69,9 +69,9 @@ export function CustomerManager() {
 
       {data && data.pagination.totalPages > 1 && (
         <nav aria-label="Customer pages" className="flex items-center gap-4 text-sm">
-          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Previous</button>
+          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Previous</button>
           <span className="text-stone">Page {data.pagination.page} of {data.pagination.totalPages} ({data.pagination.total} customers)</span>
-          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Next</button>
+          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Next</button>
         </nav>
       )}
     </div>

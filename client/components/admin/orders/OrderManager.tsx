@@ -79,11 +79,11 @@ export function OrderManager() {
           <select id="o-pay" value={payment} onChange={(e) => reset(setPayment)(e.target.value as typeof payment)} className={field}><option value="">All</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="failed">Failed</option><option value="refunded">Refunded</option></select></div>
         <div className="space-y-1"><label htmlFor="o-from" className="block text-xs text-stone">From</label><input id="o-from" type="date" value={from} max={to || undefined} onChange={(e) => reset(setFrom)(e.target.value)} className={field} /></div>
         <div className="space-y-1"><label htmlFor="o-to" className="block text-xs text-stone">To</label><input id="o-to" type="date" value={to} min={from || undefined} onChange={(e) => reset(setTo)(e.target.value)} className={field} /></div>
-        {filtered && <button type="button" onClick={() => { setQ(""); setMethod(""); setPayment(""); setFrom(""); setTo(""); setPage(1); }} className="h-10 text-sm underline underline-offset-4">Clear filters</button>}
+        {filtered && <button type="button" onClick={() => { setQ(""); setMethod(""); setPayment(""); setFrom(""); setTo(""); setPage(1); }} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Clear filters</button>}
       </div>
 
       {isLoading ? <div role="status" aria-label="Loading orders" className="h-64 animate-pulse bg-sand/60 motion-reduce:animate-none" /> : error || !data ? (
-        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Orders could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Orders could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : data.orders.length === 0 ? (
         <p className="border border-sand bg-white p-10 text-center text-stone">{status || filtered ? "No orders match these filters." : "No orders yet. They will appear here as customers check out."}</p>
       ) : (
@@ -113,9 +113,9 @@ export function OrderManager() {
 
       {data && data.pagination.totalPages > 1 && (
         <nav aria-label="Order pages" className="flex items-center gap-4 text-sm">
-          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Previous</button>
+          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Previous</button>
           <span className="text-stone">Page {data.pagination.page} of {data.pagination.totalPages} ({data.pagination.total} orders)</span>
-          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Next</button>
+          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Next</button>
         </nav>
       )}
     </div>

@@ -45,7 +45,7 @@ function Content({ id }: { id: string }) {
         {awaitingPayment && !gaveUp && <p role="status" className="mt-1 text-stone">Confirming your payment...</p>}
         {awaitingPayment && gaveUp && <p role="status" className="mt-1 text-stone">We have not received confirmation yet. If you were charged, your order will update shortly. Check My orders in a few minutes.</p>}
         {order.paymentMethod === "stripe" && order.paymentStatus === "failed" && (
-          <p role="alert" className="mt-1 text-red-800">Your payment did not go through. <Link href={`/checkout/pay/${order._id}`} className="underline underline-offset-4">Try again</Link></p>
+          <p role="alert" className="mt-1 text-red-800">Your payment did not go through. <Link href={`/checkout/pay/${order._id}`} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</Link></p>
         )}
       </div>
 

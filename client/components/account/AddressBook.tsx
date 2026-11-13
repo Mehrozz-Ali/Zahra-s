@@ -45,12 +45,12 @@ export function AddressBook() {
                   {a.phone}
                 </address>
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <button type="button" onClick={() => setEditing(a)} className="inline-flex items-center gap-1.5 underline underline-offset-4"><Pencil className="h-4 w-4" aria-hidden />Edit</button>
+                  <button type="button" onClick={() => setEditing(a)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink"><Pencil className="h-4 w-4" aria-hidden />Edit</button>
                   {!a.isDefault && a._id && (
-                    <button type="button" onClick={() => run(updateAddress({ id: a._id!, changes: { isDefault: true } }).unwrap())} className="underline underline-offset-4">Make default</button>
+                    <button type="button" onClick={() => run(updateAddress({ id: a._id!, changes: { isDefault: true } }).unwrap())} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Make default</button>
                   )}
                   {a._id && (
-                    <button type="button" onClick={() => window.confirm("Delete this address?") && run(deleteAddress(a._id!).unwrap())} className="inline-flex items-center gap-1.5 text-red-800 underline underline-offset-4"><Trash2 className="h-4 w-4" aria-hidden />Delete</button>
+                    <button type="button" onClick={() => window.confirm("Delete this address?") && run(deleteAddress(a._id!).unwrap())} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-red-800 px-4 text-sm text-red-800 transition-colors hover:bg-red-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"><Trash2 className="h-4 w-4" aria-hidden />Delete</button>
                   )}
                 </div>
               </li>

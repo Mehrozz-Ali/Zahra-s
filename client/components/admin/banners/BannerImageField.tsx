@@ -61,7 +61,7 @@ export function BannerImageField({ label, hint, shape, currentUrl, file, removed
       <div className="flex flex-wrap items-center gap-4 text-sm">
         <input ref={input} id={id} type="file" accept={IMAGE_TYPES.join(",")} className="sr-only" onChange={(e) => pick(e.target.files?.[0])} />
         <label htmlFor={id} className="inline-block cursor-pointer border border-ink px-4 py-2 hover:bg-ink hover:text-ivory has-[:focus-visible]:outline">{shown ? "Replace picture" : "Choose picture"}</label>
-        {file && <button type="button" onClick={() => onFile(null)} className="underline underline-offset-4">Undo</button>}
+        {file && <button type="button" onClick={() => onFile(null)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Undo</button>}
         {onRemove && shown && !file && <button type="button" onClick={onRemove} aria-label="Remove image" title="Remove image" className="inline-flex h-10 w-10 items-center justify-center text-red-800"><Trash2 className="h-5 w-5" aria-hidden /></button>}
       </div>
       {(localError || error) && <p role="alert" className="text-sm text-red-700">{localError || error}</p>}

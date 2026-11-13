@@ -54,7 +54,7 @@ export function CouponManager() {
       </div>
 
       {isLoading ? <div role="status" aria-label="Loading coupons" className="h-40 animate-pulse bg-sand/60 motion-reduce:animate-none" /> : error || !data ? (
-        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Coupons could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>
+        <p role="alert" className="bg-red-50 p-4 text-red-800">{getErrorMessage(error, "Coupons could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>
       ) : data.coupons.length === 0 ? (
         <p className="border border-sand bg-white p-8 text-center text-stone">{status === "all" && !q ? "No coupons yet. Create the first one." : "No coupons match."}</p>
       ) : (
@@ -88,9 +88,9 @@ export function CouponManager() {
 
       {data && data.pagination.totalPages > 1 && (
         <nav aria-label="Coupon pages" className="flex items-center gap-4 text-sm">
-          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Previous</button>
+          <button type="button" disabled={!data.pagination.hasPrev} onClick={() => setPage(page - 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Previous</button>
           <span className="text-stone">Page {data.pagination.page} of {data.pagination.totalPages}</span>
-          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="underline underline-offset-4 disabled:no-underline disabled:opacity-40">Next</button>
+          <button type="button" disabled={!data.pagination.hasNext} onClick={() => setPage(page + 1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Next</button>
         </nav>
       )}
     </div>

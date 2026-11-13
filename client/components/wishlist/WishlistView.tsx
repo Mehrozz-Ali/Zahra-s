@@ -43,7 +43,7 @@ function Content() {
     );
   }
   if (isError) {
-    return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your wishlist. <button type="button" onClick={retry} className="underline underline-offset-4">Try again</button></p>;
+    return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your wishlist. <button type="button" onClick={retry} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button></p>;
   }
   if (!data || data.length === 0) {
     return (

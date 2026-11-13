@@ -101,7 +101,7 @@ export function ShopBrowser({ params, basePath, facets, categories, total, child
         <label className="flex items-center gap-2 py-1 text-sm"><input type="checkbox" className="h-4 w-4 accent-rose-dark" checked={!!params.onSale} onChange={() => toggle("onSale", true)} /> On sale</label>
       </fieldset>
 
-      {chips.length > 0 && <button type="button" onClick={clearAll} className="text-sm underline underline-offset-4 hover:text-rose-dark">Clear all filters</button>}
+      {chips.length > 0 && <button type="button" onClick={clearAll} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Clear all filters</button>}
     </div>
   );
 

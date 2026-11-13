@@ -28,7 +28,7 @@ export function DashboardView() {
   if (error || !data) {
     return (
       <p role="alert" className="bg-red-50 p-5 text-red-800">
-        {getErrorMessage(error, "The dashboard could not be loaded.")} <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button>
+        {getErrorMessage(error, "The dashboard could not be loaded.")} <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>
       </p>
     );
   }
@@ -46,7 +46,7 @@ export function DashboardView() {
           <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Dashboard</h1>
           <p className="text-sm text-stone">Revenue counts paid card orders and delivered cash orders. Cancelled orders are left out.</p>
         </div>
-        <button type="button" onClick={() => refetch()} disabled={isFetching} className="shrink-0 text-sm underline underline-offset-4 hover:text-rose-dark disabled:opacity-60">{isFetching ? "Refreshing..." : "Refresh"}</button>
+        <button type="button" onClick={() => refetch()} disabled={isFetching} className="shrink-0 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">{isFetching ? "Refreshing..." : "Refresh"}</button>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">

@@ -21,15 +21,15 @@ export function ReviewStep({ address, paymentMethod, delivery, total, placing, e
       <div className="space-y-3">
         <div className={block}>
           <div><h3 className="font-medium">Ship to</h3><p className="leading-relaxed text-stone">{address.fullName}<br />{address.line1}{address.line2 ? `, ${address.line2}` : ""}<br />{address.city}, {address.province}<br />{address.phone}</p></div>
-          <button type="button" onClick={() => onEdit(1)} className="underline underline-offset-4">Change</button>
+          <button type="button" onClick={() => onEdit(1)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Change</button>
         </div>
         <div className={block}>
           <div><h3 className="font-medium">Delivery</h3><p className="text-stone">{delivery ? `${delivery.label} (${delivery.estimate})` : "-"}</p></div>
-          <button type="button" onClick={() => onEdit(2)} className="underline underline-offset-4">Change</button>
+          <button type="button" onClick={() => onEdit(2)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Change</button>
         </div>
         <div className={block}>
           <div><h3 className="font-medium">Payment</h3><p className="text-stone">{paymentMethod === "cod" ? "Cash on delivery. Please have the exact amount ready." : "Card payment. You will enter your card details on the next screen."}</p></div>
-          <button type="button" onClick={() => onEdit(3)} className="underline underline-offset-4">Change</button>
+          <button type="button" onClick={() => onEdit(3)} className="inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Change</button>
         </div>
       </div>
       {error && <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">{error}</p>}

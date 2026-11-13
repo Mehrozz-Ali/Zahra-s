@@ -23,7 +23,9 @@ export function notifyOrder(orderId: unknown, event: OrderEmailEvent): void {
 async function send(orderId: string, event: OrderEmailEvent): Promise<void> {
   const order = await Order.findById(orderId);
   if (!order) return;
-  const user = await User.findById(order.user).select("name email");
+  const account = order.user ? await User.findById(order.user).select("name email") : null;
+  // Guest orders have no account: use the name and email given at checkout
+  const user = account ?? (order.contactEmail ? { name: order.shippingAddress.fullName, email: order.contactEmail } : null);
   if (!user) return;
 
   const data: OrderEmailData = {

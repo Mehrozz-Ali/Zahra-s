@@ -36,7 +36,10 @@ export interface IStatusEvent {
 
 export interface IOrder {
   orderNumber: string;
-  user: Types.ObjectId;
+  /** Missing for guest orders (checked out without an account) */
+  user?: Types.ObjectId;
+  /** Email given at checkout (guests); used for order emails */
+  contactEmail?: string;
   items: IOrderItem[];
   shippingAddress: IShippingAddress;
   deliveryMethod: DeliveryMethod;
@@ -73,7 +76,8 @@ const itemSchema = new Schema<IOrderItem>(
 const orderSchema = new Schema<IOrder>(
   {
     orderNumber: { type: String, unique: true },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", index: true },
+    contactEmail: { type: String, lowercase: true, trim: true },
     items: { type: [itemSchema], validate: [(v: IOrderItem[]) => v.length > 0, "An order needs at least one item"] },
     shippingAddress: {
       fullName: { type: String, required: true },

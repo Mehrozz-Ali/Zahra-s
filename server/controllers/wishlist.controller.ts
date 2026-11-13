@@ -18,3 +18,11 @@ export const addToWishlist = asyncHandler(async (req, res) => {
 export const removeFromWishlist = asyncHandler(async (req, res) => {
   sendSuccess(res, { ids: await wishlistService.removeFromWishlist(getAuthUser(req).id, String(req.params.productId)) }, "Removed from wishlist");
 });
+
+export const lookupWishlist = asyncHandler(async (req, res) => {
+  sendSuccess(res, { items: await wishlistService.getWishlistItems((req.body as { ids: string[] }).ids) }, "Wishlist fetched successfully");
+});
+
+export const mergeWishlist = asyncHandler(async (req, res) => {
+  sendSuccess(res, { ids: await wishlistService.mergeWishlist(getAuthUser(req).id, (req.body as { ids: string[] }).ids) }, "Wishlist merged");
+});

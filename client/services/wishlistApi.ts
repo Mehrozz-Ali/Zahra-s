@@ -16,6 +16,17 @@ export const wishlistApi = api.injectEndpoints({
       transformResponse: unwrapIds,
       providesTags: ["Wishlist"],
     }),
+    /** Guests: show the articles whose ids the browser keeps. A POST that only reads. */
+    lookupWishlist: builder.mutation<WishlistItem[], string[]>({
+      query: (ids) => ({ url: "/wishlist/lookup", method: "POST", body: { ids } }),
+      transformResponse: (r: ApiSuccess<{ items: WishlistItem[] }>) => r.data.items,
+    }),
+    /** On login: add what the guest saved to the account. */
+    mergeWishlist: builder.mutation<string[], string[]>({
+      query: (ids) => ({ url: "/wishlist/merge", method: "POST", body: { ids } }),
+      transformResponse: unwrapIds,
+      invalidatesTags: ["Wishlist"],
+    }),
     addToWishlist: builder.mutation<string[], string>({
       query: (productId) => ({ url: `/wishlist/${productId}`, method: "POST" }),
       transformResponse: unwrapIds,
@@ -42,4 +53,4 @@ export const wishlistApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetWishlistQuery, useGetWishlistIdsQuery, useAddToWishlistMutation, useRemoveFromWishlistMutation } = wishlistApi;
+export const { useGetWishlistQuery, useGetWishlistIdsQuery, useAddToWishlistMutation, useRemoveFromWishlistMutation, useLookupWishlistMutation, useMergeWishlistMutation } = wishlistApi;

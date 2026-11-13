@@ -14,7 +14,15 @@ export const placeOrderSchema = z.object({
   deliveryMethod: z.enum(DELIVERY_METHODS),
   paymentMethod: z.enum(PAYMENT_METHODS),
   couponCode: couponCodeOptional,
+  /** Required for guests (no account), ignored when logged in */
+  email: z.string().trim().toLowerCase().email("Enter a valid email address").max(120).optional(),
 });
+
+export const trackOrderSchema = z.object({
+  orderNumber: z.string().trim().toUpperCase().min(5).max(30),
+  phone: z.string().trim().min(7).max(20),
+});
+export type TrackOrderInput = z.infer<typeof trackOrderSchema>;
 
 export type QuoteInput = z.infer<typeof quoteSchema>;
 export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;

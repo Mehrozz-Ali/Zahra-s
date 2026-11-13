@@ -10,7 +10,12 @@ import { redeemCoupon, releaseCoupon } from "./coupon.service";
 import { cancelPaymentIntent } from "./payment.service";
 import { reserveStock, restoreStock, type StockItem } from "./inventory.service";
 
-export async function placeOrder(userId: string, input: PlaceOrderInput) {
+export async function placeOrder(userId: string | undefined, input: PlaceOrderInput) {
+  // Guests (no account) pay cash on delivery only and must leave an email for the confirmation
+  if (!userId) {
+    if (input.paymentMethod !== "cod") throw ApiError.badRequest("Please log in to pay by card, or choose cash on delivery.");
+    if (!input.email) throw ApiError.badRequest("Enter your email address so we can send your order confirmation.");
+  }
   if (input.paymentMethod === "stripe" && !isStripeConfigured) throw new ApiError(503, "Card payments are not set up yet. Please choose cash on delivery.");
   // Prices and stock come from the database, never from the browser
   const { items, options, coupon, couponError } = await quoteCheckout(input.lines, input.couponCode);
@@ -32,7 +37,7 @@ export async function placeOrder(userId: string, input: PlaceOrderInput) {
 
   try {
     const order = await Order.create({
-      user: userId,
+      ...(userId ? { user: userId } : { contactEmail: input.email }),
       items: items.map((i) => ({ product: i.productId, name: i.name, slug: i.slug, image: i.image, sku: i.sku, size: i.size, quantity: i.quantity, price: i.unitPrice })),
       shippingAddress: { ...input.shippingAddress, country: "Pakistan" },
       deliveryMethod: input.deliveryMethod,
@@ -46,7 +51,7 @@ export async function placeOrder(userId: string, input: PlaceOrderInput) {
       total: summary.total,
       coupon: coupon ? { code: coupon.code, discountAmount: coupon.discountAmount } : undefined,
     });
-    await Cart.updateOne({ user: userId }, { items: [] });
+    if (userId) await Cart.updateOne({ user: userId }, { items: [] });
     // Cash orders are final now. Card orders get their confirmation once the payment is verified (see payment.service).
     if (order.paymentMethod === "cod") notifyOrder(order._id, { kind: "confirmation" });
     return order;
@@ -60,6 +65,17 @@ export async function placeOrder(userId: string, input: PlaceOrderInput) {
 export async function getOrderForUser(userId: string, orderId: string) {
   const order = await Order.findOne({ _id: orderId, user: userId });
   if (!order) throw ApiError.notFound("Order not found");
+  return order;
+}
+
+/** A guest finds their order with the order number AND the phone number used at checkout. */
+export async function trackGuestOrder({ orderNumber, phone }: { orderNumber: string; phone: string }) {
+  const digits = (v: string) => v.replace(/\D/g, "").replace(/^(92|0)/, "");
+  const order = await Order.findOne({ orderNumber });
+  // Same message for "no such order" and "wrong phone", so order numbers cannot be probed
+  if (!order || digits(order.shippingAddress.phone) !== digits(phone) || digits(phone) === "") {
+    throw ApiError.notFound("We could not find an order with that number and phone number.");
+  }
   return order;
 }
 

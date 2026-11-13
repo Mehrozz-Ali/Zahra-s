@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import type { ReactNode } from "react";
 import { CartSync } from "@/components/cart/CartSync";
+import { WishlistSync } from "@/components/wishlist/WishlistSync";
 import { APP_URL } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 import { StoreProvider } from "@/store/provider";
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <StoreProvider>
           <CartSync />
+          <WishlistSync />
           {children}
         </StoreProvider>
       </body>

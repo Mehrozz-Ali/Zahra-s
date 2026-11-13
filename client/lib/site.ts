@@ -14,4 +14,5 @@ export const SITE = {
   hours: "Monday to Saturday, 10am to 6pm (Pakistan time)", // TODO before launch: your real support hours
   instagramUrl: "https://www.instagram.com/zahras.us?srtk=ejRsa3N1OXpkY2Zm",
   facebookUrl: "https://www.facebook.com/share/1JKjwPfgj4/?mibextid=wwXIfr",
+  tiktokUrl: "https://www.tiktok.com/@zahras1804?_r=1&_t=ZS-9B2HfvqzUR7",
 } as const;

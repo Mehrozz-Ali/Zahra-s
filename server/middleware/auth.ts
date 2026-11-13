@@ -27,6 +27,22 @@ export const protect = asyncHandler(async (req, _res, next) => {
   next();
 });
 
+/** Like `protect`, but a visitor without a (valid) login is allowed through as a guest: req.user stays unset. */
+export const optionalAuth = asyncHandler(async (req, _res, next) => {
+  const token: unknown = req.cookies?.[COOKIE_NAME];
+  if (typeof token === "string" && token !== "") {
+    try {
+      const payload = verifyToken(token);
+      const user = await User.findById(payload.id).select("role isActive passwordChangedAt");
+      const changed = user?.passwordChangedAt && payload.iat !== undefined && payload.iat * 1000 < user.passwordChangedAt.getTime();
+      if (user && user.isActive && !changed) req.user = { id: user.id, role: user.role };
+    } catch {
+      /* bad or expired cookie: treat as a guest */
+    }
+  }
+  next();
+});
+
 /** Use inside controllers that sit behind `protect`. */
 export function getAuthUser(req: Request): NonNullable<Request["user"]> {
   if (!req.user) throw ApiError.unauthorized();

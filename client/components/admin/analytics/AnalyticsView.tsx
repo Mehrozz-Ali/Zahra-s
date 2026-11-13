@@ -33,7 +33,7 @@ export function AnalyticsView() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-5xl">Analytics</h1>
+          <h1 className="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">Analytics</h1>
           <p className="text-sm text-stone">{data ? `${pk(data.from)} to today. ` : ""}Revenue counts paid card orders and delivered cash orders. Cancelled orders are left out of sales.</p>
         </div>
         <div role="group" aria-label="Time range" className="flex gap-1">

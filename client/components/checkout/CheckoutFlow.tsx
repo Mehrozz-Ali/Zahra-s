@@ -10,6 +10,8 @@ import { DeliveryStep } from "@/components/checkout/DeliveryStep";
 import { PaymentStep } from "@/components/checkout/PaymentStep";
 import { ReviewStep } from "@/components/checkout/ReviewStep";
 import { Stepper } from "@/components/checkout/Stepper";
+import { useAuth } from "@/hooks/useAuth";
+import { saveGuestOrder } from "@/lib/guestOrder";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { getErrorMessage } from "@/lib/errors";
 import { useGetCheckoutQuoteQuery, usePlaceOrderMutation } from "@/services/orderApi";
@@ -24,7 +26,9 @@ export function CheckoutFlow() {
   const items = useAppSelector((s) => s.cart.items);
   const hydrated = useAppSelector((s) => s.cart.hydrated);
   const [step, setStep] = useState<Step>(1);
+  const { user, isLoading: authLoading } = useAuth();
   const [address, setAddress] = useState<ShippingAddress | null>(null);
+  const [email, setEmail] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "stripe">("cod");
   const [couponCode, setCouponCode] = useState(""); // the code the customer applied; the server decides if it is valid
@@ -34,7 +38,7 @@ export function CheckoutFlow() {
   const lines = useMemo(() => items.map(({ productId, size, quantity }) => ({ productId, size, quantity })), [items]);
   const { data: quote, isError: quoteFailed, refetch } = useGetCheckoutQuoteQuery({ lines, couponCode: couponCode || undefined }, { skip: lines.length === 0 });
 
-  if (!hydrated) return <p role="status" className="p-10 text-center text-stone">Loading checkout...</p>;
+  if (!hydrated || authLoading) return <p role="status" className="p-10 text-center text-stone">Loading checkout...</p>;
 
   if (items.length === 0) {
     return (
@@ -53,8 +57,9 @@ export function CheckoutFlow() {
     if (!address) return setStep(1);
     setError("");
     try {
-      const order = await placeOrder({ lines, shippingAddress: address, deliveryMethod, paymentMethod, couponCode: quote?.coupon?.code }).unwrap();
+      const order = await placeOrder({ lines, shippingAddress: address, deliveryMethod, paymentMethod, couponCode: quote?.coupon?.code, email: user ? undefined : email }).unwrap();
       dispatch(clearCart());
+      if (!user) saveGuestOrder(order); // a guest has no account to look the order up in
       router.replace(paymentMethod === "stripe" ? `/checkout/pay/${order._id}` : `/checkout/confirmation/${order._id}`);
     } catch (e) {
       setError(getErrorMessage(e));
@@ -69,11 +74,11 @@ export function CheckoutFlow() {
       {quoteFailed && <p role="alert" className="mb-6 bg-red-50 p-4 text-sm text-red-800">We could not confirm current prices. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>}
       {cartChanged && <p role="alert" className="mb-6 bg-sand/60 p-4 text-sm">Some items in your cart have changed. <Link href="/cart" className="underline underline-offset-4">Review your cart</Link> before placing your order.</p>}
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
-        <div>
-          {step === 1 && <AddressStep initial={address} onNext={(a) => { setAddress(a); setStep(2); }} />}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0">
+          {step === 1 && <AddressStep initial={address} initialEmail={email} onNext={(a, e) => { setAddress(a); if (e) setEmail(e); setStep(2); }} />}
           {step === 2 && <DeliveryStep options={quote?.options} value={deliveryMethod} onChange={setDeliveryMethod} onBack={() => setStep(1)} onNext={() => setStep(3)} />}
-          {step === 3 && <PaymentStep value={paymentMethod} onChange={setPaymentMethod} onBack={() => setStep(2)} onNext={() => setStep(4)} />}
+          {step === 3 && <PaymentStep cardAllowed={Boolean(user)} value={paymentMethod} onChange={setPaymentMethod} onBack={() => setStep(2)} onNext={() => setStep(4)} />}
           {step === 4 && address && <ReviewStep address={address} paymentMethod={paymentMethod} delivery={selected} total={cartChanged ? undefined : selected?.summary.total} placing={placing} error={error} onEdit={setStep} onBack={() => setStep(3)} onPlace={submit} />}
         </div>
         <CheckoutSummary

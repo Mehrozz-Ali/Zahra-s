@@ -4,13 +4,15 @@ import { CARD_PAYMENTS_ENABLED } from "@/lib/constants";
 type Method = "cod" | "stripe";
 
 interface PaymentStepProps {
+  /** Card payment needs an account; guests pay cash on delivery */
+  cardAllowed?: boolean;
   value: Method;
   onChange: (method: Method) => void;
   onBack: () => void;
   onNext: () => void;
 }
 
-export function PaymentStep({ value, onChange, onBack, onNext }: PaymentStepProps) {
+export function PaymentStep({ cardAllowed = true, value, onChange, onBack, onNext }: PaymentStepProps) {
   const option = "flex items-center gap-3 border bg-white p-4";
   return (
     <section aria-labelledby="payment-heading" className="space-y-6">
@@ -21,7 +23,7 @@ export function PaymentStep({ value, onChange, onBack, onNext }: PaymentStepProp
           <input type="radio" name="payment" value="cod" checked={value === "cod"} onChange={() => onChange("cod")} className="accent-rose-dark" />
           <span><span className="block font-medium">Cash on delivery</span><span className="text-sm text-stone">Pay the courier when your order arrives.</span></span>
         </label>
-        {CARD_PAYMENTS_ENABLED && (
+        {CARD_PAYMENTS_ENABLED && cardAllowed && (
         <label className={`${option} cursor-pointer ${value === "stripe" ? "border-ink" : "border-sand"}`}>
           <input type="radio" name="payment" value="stripe" checked={value === "stripe"} onChange={() => onChange("stripe")} className="accent-rose-dark" />
           <span><span className="block font-medium">Debit or credit card</span><span className="text-sm text-stone">Pay securely online. Your card details never touch our servers.</span></span>

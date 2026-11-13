@@ -2,12 +2,38 @@
 
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { AuthGuard } from "@/components/auth/AuthGuard";
+import { useEffect, useState } from "react";
 import { WishlistCard } from "@/components/wishlist/WishlistCard";
-import { useGetWishlistQuery } from "@/services/wishlistApi";
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlistIds } from "@/hooks/useWishlist";
+import { useGetWishlistQuery, useLookupWishlistMutation } from "@/services/wishlistApi";
+import type { WishlistItem } from "@/types";
+
+/** Customers: their saved list. Guests: the list kept in this browser, looked up by id. */
+function useWishlistItems() {
+  const { user, isLoading: authLoading } = useAuth();
+  const account = useGetWishlistQuery(undefined, { skip: authLoading || !user });
+  const ids = useWishlistIds();
+  const [lookup, { isLoading: looking, isError: lookupFailed }] = useLookupWishlistMutation();
+  const [fetched, setFetched] = useState<WishlistItem[] | null>(null);
+  const idsKey = ids.join(",");
+
+  useEffect(() => {
+    if (authLoading || user) return;
+    if (ids.length === 0) { setFetched([]); return; }
+    lookup(ids).unwrap().then(setFetched).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- idsKey stands for ids
+  }, [authLoading, user, idsKey, lookup]);
+
+  if (user) return { data: account.data, isLoading: account.isLoading, isError: account.isError, retry: () => void account.refetch() };
+  // Removing a heart updates ids at once; hide the card without waiting for another lookup
+  const data = fetched?.filter((i) => ids.includes(i.product._id));
+  return { data, isLoading: authLoading || (fetched === null && !lookupFailed) || (looking && fetched === null), isError: lookupFailed && fetched === null, retry: () => lookup(ids).unwrap().then(setFetched).catch(() => undefined) };
+}
 
 function Content() {
-  const { data, isLoading, isError, refetch } = useGetWishlistQuery();
+  const { data, isLoading, isError, retry } = useWishlistItems();
+  const { user, isLoading: authLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -17,7 +43,7 @@ function Content() {
     );
   }
   if (isError) {
-    return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your wishlist. <button type="button" onClick={() => refetch()} className="underline underline-offset-4">Try again</button></p>;
+    return <p role="alert" className="bg-red-50 p-4 text-sm text-red-800">We could not load your wishlist. <button type="button" onClick={retry} className="underline underline-offset-4">Try again</button></p>;
   }
   if (!data || data.length === 0) {
     return (
@@ -32,6 +58,9 @@ function Content() {
   return (
     <>
       <p className="mb-6 text-stone">{data.length} saved item{data.length === 1 ? "" : "s"}</p>
+      {!authLoading && !user && (
+        <p className="mb-6 bg-sand/60 p-4 text-sm">Saved on this device. <Link href="/auth/login?redirect=/wishlist" className="underline underline-offset-4">Log in</Link> or <Link href="/auth/register?redirect=/wishlist" className="underline underline-offset-4">create an account</Link> to keep your wishlist on every device.</p>
+      )}
       <ul className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">{data.map((item) => <WishlistCard key={item.product._id} item={item} />)}</ul>
     </>
   );
@@ -39,11 +68,9 @@ function Content() {
 
 export function WishlistView() {
   return (
-    <AuthGuard>
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <h1 className="mb-6 font-display text-5xl">Wishlist</h1>
-        <Content />
-      </div>
-    </AuthGuard>
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <h1 className="mb-6 font-display text-5xl">Wishlist</h1>
+      <Content />
+    </div>
   );
 }

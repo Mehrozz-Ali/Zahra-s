@@ -303,6 +303,8 @@ export interface Order {
   total: number;
   coupon?: { code: string; discountAmount: number };
   statusHistory: Array<{ status: OrderStatus; note?: string; changedAt: string }>;
+  /** Email left at checkout by a guest (no account) */
+  contactEmail?: string;
   createdAt: string;
 }
 

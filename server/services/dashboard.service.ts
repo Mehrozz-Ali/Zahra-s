@@ -81,7 +81,7 @@ export async function getDashboard(now = new Date()) {
       { $sort: { revenue: -1 } },
       { $limit: 8 },
     ]),
-    Order.find().sort({ createdAt: -1 }).limit(6).populate<{ user: { name: string } | null }>("user", "name").select("orderNumber user total orderStatus paymentStatus paymentMethod createdAt").lean(),
+    Order.find().sort({ createdAt: -1 }).limit(6).populate<{ user: { name: string } | null }>("user", "name").select("orderNumber user shippingAddress total orderStatus paymentStatus paymentMethod createdAt").lean(),
     Product.find({ status: { $nin: ["archived", "draft"] }, totalStock: { $lte: LOW_STOCK_THRESHOLD } }).sort({ totalStock: 1, name: 1 }).limit(8).select("name slug totalStock images").lean(),
   ]);
 
@@ -103,7 +103,7 @@ export async function getDashboard(now = new Date()) {
     monthly: months.map((month) => ({ month, revenue: monthlyMap.get(month)?.revenue ?? 0, orders: monthlyMap.get(month)?.orders ?? 0 })),
     salesByCategory: categoryRaw.map((c) => ({ name: c.name, revenue: c.revenue, units: c.units })),
     recentOrders: recentOrders.map((o) => ({
-      _id: o._id, orderNumber: o.orderNumber, customerName: o.user?.name ?? "Deleted customer", total: o.total,
+      _id: o._id, orderNumber: o.orderNumber, customerName: o.user?.name ?? (o.shippingAddress?.fullName ? `${o.shippingAddress.fullName} (guest)` : "Deleted customer"), total: o.total,
       orderStatus: o.orderStatus, paymentStatus: o.paymentStatus, paymentMethod: o.paymentMethod, createdAt: o.createdAt,
     })),
     lowStock: lowStockProducts.map((p) => ({ _id: p._id, name: p.name, slug: p.slug, totalStock: p.totalStock, image: (p.images.find((i) => i.isPrimary) ?? p.images[0])?.url })),

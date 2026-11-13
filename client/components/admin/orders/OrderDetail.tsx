@@ -133,6 +133,12 @@ export function OrderDetail({ id }: { id: string }) {
                 <p className="font-medium"><Link href={`/admin/customers/${order.user._id}`} className="hover:text-rose-dark">{order.user.name}</Link></p>
                 <p><a href={`mailto:${order.user.email}`} className="underline underline-offset-4">{order.user.email}</a></p>
               </>
+            ) : order.contactEmail ? (
+              <>
+                <p className="font-medium">{order.shippingAddress.fullName} <span className="ml-1 rounded-sm bg-sand px-1.5 py-0.5 text-xs font-normal uppercase tracking-wider text-stone">Guest</span></p>
+                <p><a href={`mailto:${order.contactEmail}`} className="break-all underline underline-offset-4">{order.contactEmail}</a></p>
+                <p className="mt-1 text-stone">Ordered without an account.</p>
+              </>
             ) : <p className="text-stone">This customer account no longer exists.</p>}
           </section>
 

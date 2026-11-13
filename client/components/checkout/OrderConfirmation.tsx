@@ -3,13 +3,21 @@
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AuthGuard } from "@/components/auth/AuthGuard";
+import { useAuth } from "@/hooks/useAuth";
+import { readGuestOrder } from "@/lib/guestOrder";
 import { formatPrice } from "@/lib/format";
 import { useGetOrderQuery } from "@/services/orderApi";
 
 function Content({ id }: { id: string }) {
-  const { data: order, isLoading, isError, refetch } = useGetOrderQuery(id);
+  const { user, isLoading: authLoading } = useAuth();
+  const { data: accountOrder, isLoading: orderLoading, isError, refetch } = useGetOrderQuery(id, { skip: authLoading || !user });
   const [gaveUp, setGaveUp] = useState(false);
+  // Guests have no account, so their order was kept in this browser tab when they placed it
+  const [guestOrder, setGuestOrder] = useState<ReturnType<typeof readGuestOrder>>(null);
+  const [guestChecked, setGuestChecked] = useState(false);
+  useEffect(() => { setGuestOrder(readGuestOrder(id)); setGuestChecked(true); }, [id]);
+  const order = user ? accountOrder : guestOrder;
+  const isLoading = authLoading || (user ? orderLoading : !guestChecked);
 
   // A card payment is confirmed by Stripe's webhook a moment after the customer pays, so check again briefly
   const awaitingPayment = order?.paymentMethod === "stripe" && order.paymentStatus === "pending" && order.orderStatus === "pending";
@@ -21,8 +29,8 @@ function Content({ id }: { id: string }) {
   }, [awaitingPayment, gaveUp, refetch]);
 
   if (isLoading) return <p role="status" className="p-10 text-center text-stone">Loading your order...</p>;
-  if (isError || !order) {
-    return <div className="mx-auto max-w-xl px-6 py-24 text-center"><h1 className="font-display text-5xl">Order not found</h1><p className="mb-8 mt-2 text-stone">We could not find this order on your account.</p><Link href="/shop" className="underline underline-offset-4">Continue shopping</Link></div>;
+  if ((user && isError) || !order) {
+    return <div className="mx-auto max-w-xl px-6 py-24 text-center"><h1 className="font-display text-5xl">{user ? "Order not found" : "Your order was placed"}</h1><p className="mb-8 mt-2 text-stone">{user ? "We could not find this order on your account." : "To see it again, use Track order with your order number and phone number."}</p><Link href={user ? "/shop" : "/track-order"} className="underline underline-offset-4">{user ? "Continue shopping" : "Track my order"}</Link></div>;
   }
 
   return (
@@ -32,6 +40,7 @@ function Content({ id }: { id: string }) {
         <h1 className="mt-4 font-display text-5xl">Thank you for your order</h1>
         <p className="mt-2 text-stone">Order number <strong className="text-ink">{order.orderNumber}</strong></p>
         {order.paymentMethod === "cod" && <p className="mt-1 text-stone">We will call to confirm your order before dispatch.</p>}
+        {!user && <p className="mt-3 text-sm text-stone">Save your order number. You can follow this order any time with <Link href="/track-order" className="underline underline-offset-4">Track order</Link> using the number and the phone number you entered.</p>}
         {order.paymentMethod === "stripe" && order.paymentStatus === "paid" && <p role="status" className="mt-1 text-green-800">Payment received. We will prepare your order for dispatch.</p>}
         {awaitingPayment && !gaveUp && <p role="status" className="mt-1 text-stone">Confirming your payment...</p>}
         {awaitingPayment && gaveUp && <p role="status" className="mt-1 text-stone">We have not received confirmation yet. If you were charged, your order will update shortly. Check My orders in a few minutes.</p>}
@@ -63,7 +72,7 @@ function Content({ id }: { id: string }) {
       </section>
 
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-        <Link href={`/account/orders/${order._id}`} className="bg-ink px-8 py-3.5 text-center text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">Track this order</Link>
+        <Link href={user ? `/account/orders/${order._id}` : `/track-order?order=${encodeURIComponent(order.orderNumber)}`} className="bg-ink px-8 py-3.5 text-center text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark">Track this order</Link>
         <Link href="/shop" className="border border-ink px-8 py-3.5 text-center text-sm uppercase tracking-widest hover:bg-ink hover:text-ivory">Continue shopping</Link>
       </div>
     </div>
@@ -71,5 +80,5 @@ function Content({ id }: { id: string }) {
 }
 
 export function OrderConfirmation({ id }: { id: string }) {
-  return <AuthGuard><Content id={id} /></AuthGuard>;
+  return <Content id={id} />;
 }

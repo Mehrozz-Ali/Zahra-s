@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useAppDispatch } from "@/hooks/redux";
 import { getErrorMessage } from "@/lib/errors";
 import { formatPrice } from "@/lib/format";
-import { useRemoveFromWishlistMutation } from "@/services/wishlistApi";
+import { useWishlistActions } from "@/hooks/useWishlist";
 import { addItem } from "@/store/slices/cartSlice";
 import type { WishlistItem } from "@/types";
 import { Trash2 } from "lucide-react";
@@ -15,7 +15,7 @@ import { Trash2 } from "lucide-react";
 export function WishlistCard({ item }: { item: WishlistItem }) {
   const { product, available } = item;
   const dispatch = useAppDispatch();
-  const [remove, { isLoading: removing }] = useRemoveFromWishlistMutation();
+  const { removeItem: remove, isBusy: removing } = useWishlistActions();
   const [error, setError] = useState("");
   const image = product.images.find((i) => i.isPrimary) ?? product.images[0];
 
@@ -25,7 +25,7 @@ export function WishlistCard({ item }: { item: WishlistItem }) {
 
   const removeItem = async () => {
     setError("");
-    try { await remove(product._id).unwrap(); } catch (e) { setError(getErrorMessage(e)); }
+    try { await remove(product._id); } catch (e) { setError(getErrorMessage(e)); }
   };
 
   /** One size left: move it straight to the cart. Otherwise the customer picks on the product page. */

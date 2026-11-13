@@ -12,7 +12,12 @@ export async function getWishlistIds(userId: string): Promise<string[]> {
 
 /** Saved articles, newest first. Articles that were archived, unpublished or hidden are kept but flagged unavailable. */
 export async function getWishlist(userId: string) {
-  const ids = await getWishlistIds(userId);
+  return getWishlistItems(await getWishlistIds(userId));
+}
+
+/** Same as getWishlist, for ids the browser holds (a guest's wishlist has no account behind it). */
+export async function getWishlistItems(ids: string[]) {
+  ids = [...new Set(ids)];
   if (ids.length === 0) return [];
 
   const products = await Product.find({ _id: { $in: ids } })
@@ -45,4 +50,16 @@ export async function addToWishlist(userId: string, productId: string): Promise<
 export async function removeFromWishlist(userId: string, productId: string): Promise<string[]> {
   await Wishlist.updateOne({ user: userId }, { $pull: { products: productId } });
   return (await getWishlistIds(userId));
+}
+
+/** Adds a guest's saved ids to the account on login. Skips articles that are gone or not for sale; respects the size limit. */
+export async function mergeWishlist(userId: string, guestIds: string[]): Promise<string[]> {
+  const ids = await getWishlistIds(userId);
+  const wanted = [...new Set(guestIds)].filter((id) => !ids.includes(id));
+  if (wanted.length === 0) return ids;
+  const valid = await Product.find({ _id: { $in: wanted }, status: "active" }).select("_id");
+  const room = Math.max(0, MAX_ITEMS - ids.length);
+  const toAdd = valid.slice(0, room).map((p) => p._id);
+  if (toAdd.length > 0) await Wishlist.updateOne({ user: userId }, { $addToSet: { products: { $each: toAdd } } }, { upsert: true });
+  return getWishlistIds(userId);
 }

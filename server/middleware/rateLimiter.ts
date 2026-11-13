@@ -18,6 +18,15 @@ export const authLimiter = rateLimit({
   message: limitMessage("Too many attempts. Please try again later."),
 });
 
+/** Guest order lookup: strict, so order numbers cannot be guessed. */
+export const trackLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 15,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: limitMessage("Too many lookups. Please try again in a few minutes."),
+});
+
 export const orderLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,

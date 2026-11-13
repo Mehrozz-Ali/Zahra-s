@@ -403,3 +403,10 @@ These are ideas, **not built yet**:
 - [ ] Configure email (`SMTP_*`) if you want customers to get order and password-reset emails.
 - [ ] Place a test order on the live site and move it through the statuses from the admin panel.
 - [ ] Add a custom domain when you have one, and then update `CLIENT_URL` and `NEXT_PUBLIC_APP_URL`.
+
+## Guest checkout, guest wishlist and order tracking
+
+- **Order without an account:** checkout is open to everyone. Guests enter an email (for the confirmation) and pay **cash on delivery**; card payment, order history and cancelling online need an account. Guest orders have no `user`; they store `contactEmail`, and the admin order page marks them "Guest".
+- **Track order:** `/track-order` (linked in the footer) finds an order by order number + the phone number used at checkout (`POST /api/v1/orders/track`, rate limited).
+- **Wishlist without an account:** hearts work for everyone. Guests' items are kept in the browser and are merged into the account at login (`POST /api/v1/wishlist/merge`); the wishlist page shows them through `POST /api/v1/wishlist/lookup`.
+- **Passwords:** every password field has a show/hide (eye) button.

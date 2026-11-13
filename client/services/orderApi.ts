@@ -7,6 +7,8 @@ export interface PlaceOrderRequest {
   deliveryMethod: DeliveryMethod;
   paymentMethod: "cod" | "stripe";
   couponCode?: string;
+  /** Needed when ordering without an account */
+  email?: string;
 }
 
 export const orderApi = api.injectEndpoints({
@@ -31,6 +33,11 @@ export const orderApi = api.injectEndpoints({
       transformResponse: (r: ApiSuccess<{ order: Order }>) => r.data.order,
       invalidatesTags: ["Order"],
     }),
+    /** Guests find their order with the order number and the phone number used at checkout. */
+    trackOrder: builder.mutation<Order, { orderNumber: string; phone: string }>({
+      query: (body) => ({ url: "/orders/track", method: "POST", body }),
+      transformResponse: (r: ApiSuccess<{ order: Order }>) => r.data.order,
+    }),
     getOrder: builder.query<Order, string>({
       query: (id) => `/orders/${id}`,
       transformResponse: (r: ApiSuccess<{ order: Order }>) => r.data.order,
@@ -39,4 +46,4 @@ export const orderApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetCheckoutQuoteQuery, usePlaceOrderMutation, useGetMyOrdersQuery, useCancelOrderMutation, useGetOrderQuery } = orderApi;
+export const { useGetCheckoutQuoteQuery, usePlaceOrderMutation, useGetMyOrdersQuery, useCancelOrderMutation, useGetOrderQuery, useTrackOrderMutation } = orderApi;

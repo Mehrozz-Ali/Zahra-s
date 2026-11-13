@@ -47,6 +47,9 @@ export function SiteFooter() {
             <Social href={SITE.instagramUrl} label="Zahra's on Instagram">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" /></svg>
             </Social>
+            <Social href={SITE.tiktokUrl} label="Zahra's on TikTok">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true" > <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.095V2h-3.5v13.67a2.896 2.896 0 0 1-2.9 2.9 2.896 2.896 0 0 1-2.9-2.9 2.896 2.896 0 0 1 2.9-2.9c.2 0 .4.02.6.06V9.26a6.4 6.4 0 0 0-.6-.03 6.4 6.4 0 1 0 6.4 6.4V8.64a8.27 8.27 0 0 0 4.8 1.52V6.7a4.8 4.8 0 0 1-1.03-.01Z" /></svg>
+            </Social>
           </div>
         </div>
       </div>

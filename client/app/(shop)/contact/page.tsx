@@ -16,10 +16,9 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd data={{ "@context": "https://schema.org", "@type": "ContactPage", name: `Contact ${SITE.name}`, url: absoluteUrl("/contact") }} />
-      <div className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-rose-dark">Customer care</p>
-        <h1 className="font-display text-5xl sm:text-6xl">Contact us</h1>
-        <p className="mt-4 max-w-xl text-lg text-stone">Questions about an order, a size or a return? Write or call and we will help.</p>
+      <div className="mx-auto max-w-4xl px-5 py-10 sm:px-6 sm:py-16">
+        <h1 className="text-center font-display text-4xl font-semibold sm:text-5xl">Contact us</h1>
+        <p className="mx-auto mt-6 max-w-xl text-center text-base text-ink sm:text-[1.05rem]">Questions about an order, a size or a return? Write or call and we will help.</p>
 
         <ul className="mt-10 grid gap-5 sm:grid-cols-2">
           <li className="border border-sand bg-white p-6">

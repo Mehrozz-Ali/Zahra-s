@@ -6,13 +6,13 @@ export interface PolicySection { heading: string; body: ReactNode }
  * A plain, easy-to-read page: a centred title, a short opening line, then each topic as a bold heading
  * followed by ordinary paragraphs. No contents box and no numbering.
  */
-export function PolicyPage({ title, intro, sections }: { title: string; intro: string; updated?: string; sections: PolicySection[] }) {
+export function PolicyPage({ title, intro, sections }: { title: string; intro: ReactNode; updated?: string; sections: PolicySection[] }) {
   return (
     <article className="mx-auto max-w-3xl px-5 py-10 sm:px-6 sm:py-16">
       <h1 className="text-center font-display text-4xl font-semibold sm:text-5xl">{title}</h1>
 
       <div className="mt-8 space-y-5 text-base leading-8 text-ink sm:mt-10 sm:text-[1.05rem]">
-        <p>{intro}</p>
+        {typeof intro === "string" ? <p>{intro}</p> : intro}
         {sections.map((s) => (
           <section key={s.heading}>
             <h2 className="mb-2 mt-8 font-sans text-lg font-semibold">{s.heading}</h2>

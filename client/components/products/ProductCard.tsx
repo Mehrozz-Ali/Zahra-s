@@ -1,7 +1,6 @@
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { QuickAdd } from "@/components/products/QuickAdd";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/types";
@@ -35,7 +34,6 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         )}
       </Link>
       <WishlistButton productId={product._id} productName={product.name} className="absolute right-2 top-2" />
-      <QuickAdd product={product} />
     </article>
   );
 }

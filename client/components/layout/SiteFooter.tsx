@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 
 const columns: Array<{ title: string; links: Array<[string, string]> }> = [
   { title: "Shop by", links: [["All suits", "/shop"], ["New arrivals", "/shop"], ["Orders", "/account/orders"], ["Profile", "/account"], ["Wishlist", "/wishlist"]] },
-  { title: "Customer service", links: [["Contact", "/contact"], ["Track order", "/track-order"], ["Shipping policy", "/shipping-policy"], ["Return policy", "/return-policy"], ["Terms of service", "/terms-and-conditions"]] },
+  { title: "Customer service", links: [["Contact", "/contact"], ["Track order", "/track-order"], ["Shipping policy", "/shipping-policy"], ["Return policy", "/return-policy"], ["Refund policy", "/refund-policy"], ["Terms of service", "/terms-and-conditions"]] },
   { title: "Information links", links: [["About us", "/about"], ["Privacy policy", "/privacy-policy"]] },
 ];
 

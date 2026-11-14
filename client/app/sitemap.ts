@@ -12,6 +12,7 @@ const STATIC: Array<{ path: string; changeFrequency: "daily" | "weekly" | "month
   { path: "/contact", changeFrequency: "yearly", priority: 0.4 },
   { path: "/shipping-policy", changeFrequency: "yearly", priority: 0.3 },
   { path: "/return-policy", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/refund-policy", changeFrequency: "yearly", priority: 0.3 },
   { path: "/privacy-policy", changeFrequency: "yearly", priority: 0.2 },
   { path: "/terms-and-conditions", changeFrequency: "yearly", priority: 0.2 },
 ];

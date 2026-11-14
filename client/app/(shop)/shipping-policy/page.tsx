@@ -23,7 +23,9 @@ export default function Page() {
           <p>These times start when your order is confirmed, not when it is placed, and exclude Sundays and public holidays. Busy periods such as Eid can add a few days.</p></> },
         { heading: "Delivery charges", body: <>
           <p>Standard delivery costs Rs. {SITE.shippingFee.toLocaleString("en-PK")}. It is free on orders over Rs. {SITE.freeShippingOver.toLocaleString("en-PK")}. The exact charge for each delivery option is shown at checkout before you place the order.</p></> },
-        { heading: "Order processing", body: <p>Orders are packed and handed to the courier after they are confirmed. Cash on delivery orders are confirmed by us, and we may call you on the mobile number you gave if anything needs checking.</p> },
+        { heading: "Order processing", body: <p>Orders are packed and handed to the courier after they are confirmed. Before we dispatch an order, we confirm it with you by phone call, email or SMS, using the mobile number and email you gave. Cash on delivery orders are confirmed by us, so please keep your phone available.</p> },
+        { heading: "Sales and busy periods", body: <p>During sales and festival seasons we receive many more orders, and delivery within Pakistan can be slightly delayed. We will do our best to keep it on time.</p> },
+        { heading: "International orders", body: <p>At this time we do not accept orders from outside Pakistan.</p> },
         { heading: "Tracking your order", body: <p>We email you when your order ships and again when it is delivered. You can also follow its progress any time under <Link href="/account/orders">My orders</Link>.</p> },
         { heading: "Cash on delivery", body: <p>Please keep the exact amount ready for the courier. A parcel can be refused only if you did not order it; see our <Link href="/return-policy">return policy</Link> for items you want to send back after delivery.</p> },
         { heading: "Delivery problems", body: <>

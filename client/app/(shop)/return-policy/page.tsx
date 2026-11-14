@@ -26,7 +26,7 @@ export default function Page() {
         { heading: "Refunds", body: <>
           <p>Once we receive and check your return, we refund the item price. Because every order is cash on delivery, we refund by bank transfer or mobile wallet, and we will ask for the details.</p>
           <p>Delivery charges are refunded only when the return is our mistake.</p></> },
-        { heading: "Exchanges", body: <p>Need a different size or colour? Tell us when you contact us and we will exchange it if stock allows. If it is not in stock we refund you instead.</p> },
+        { heading: "Exchanges", body: <p>Need a different size or colour? Tell us when you contact us and we will exchange it if stock allows. If it is not in stock we refund you instead. The full step-by-step procedure is in our <Link href="/refund-policy">refund and exchange policy</Link>.</p> },
         { heading: "Cancelling an order", body: <p>You can cancel an order yourself from <Link href="/account/orders">My orders</Link> while it is still pending. After it is confirmed, contact us and we will cancel it if it has not shipped yet. Paid card orders that we cancel are refunded automatically.</p> },
       ]}
     />

@@ -17,7 +17,7 @@ export function Hero({ product }: { product?: Product }) {
           </div>
         </div>
         {image && product && (
-          <Link href={`/product/${product.slug}`} className="relative block aspect-[4/5] overflow-hidden bg-sand" aria-label={`View ${product.name}`}>
+          <Link href={`/product/${product.slug}`} className="relative order-first block aspect-[4/5] overflow-hidden bg-sand md:order-none" aria-label={`View ${product.name}`}>
             <Image src={image.url} alt={product.name} fill priority sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
           </Link>
         )}

@@ -10,7 +10,7 @@ import type { Banner } from "@/types";
 
 const INTERVAL_MS = 6000;
 
-/** Homepage banners the admin manages: text on the left, picture on the right. One banner stays still; several fade from one to the next. */
+/** Homepage banners the admin manages: text on the left, picture on the right on larger screens; on phones the picture comes first, then the text. One banner stays still; several fade from one to the next. */
 export function HeroSlider({ banners }: { banners: Banner[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -78,7 +78,7 @@ export function HeroSlider({ banners }: { banners: Banner[] }) {
                 inert={!active}
                 className={clsx("col-start-1 row-start-1 grid transition-opacity duration-700 motion-reduce:transition-none md:min-h-[30rem] md:grid-cols-2", active ? "opacity-100" : "pointer-events-none opacity-0")}
               >
-                <div className="flex flex-col justify-center px-6 py-10 sm:px-12 md:px-14 lg:px-20">
+                <div className="flex flex-col justify-center px-6 pb-10 pt-6 sm:px-12 md:px-14 md:py-10 lg:px-20">
                   {b.eyebrow && (
                     <p className="mb-5 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-rose-dark">
                       <span aria-hidden className="h-px w-8 bg-rose-dark" />{b.eyebrow}
@@ -96,7 +96,8 @@ export function HeroSlider({ banners }: { banners: Banner[] }) {
                 </div>
 
                 {/* The picture always has the same size; a soft blurred copy of it fills the rest of the panel */}
-                <div className="relative flex items-center justify-center overflow-hidden px-6 pb-12 pt-2 md:px-0 md:py-0">
+                {/* order-first: on phones the picture sits above the text */}
+                <div className="relative order-first flex items-center justify-center overflow-hidden px-6 pb-6 pt-8 md:order-none md:px-0 md:py-0">
                   {b.image && (
                     <Image src={b.image.url} alt="" aria-hidden fill sizes="64px" quality={20} className="scale-125 object-cover opacity-50 blur-2xl" />
                   )}

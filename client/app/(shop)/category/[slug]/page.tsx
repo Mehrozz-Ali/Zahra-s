@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { ShopView } from "@/components/shop/ShopView";
 import { getCategory } from "@/lib/data";
 import { SITE } from "@/lib/site";
@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const category = await getCategory(slug);
-  if (!category) notFound();
+  // A banner or old link to a category that was renamed, hidden or deleted lands on the shop, not on an error page
+  if (!category) redirect("/shop");
   return <ShopView params={parseShopParams(await searchParams)} basePath={`/category/${slug}`} heading={category.name} description={category.description} fixedCategory={slug} />;
 }

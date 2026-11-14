@@ -35,7 +35,7 @@ export default async function HomePage() {
         ],
       }} />
       {banners.length > 0 ? <HeroSlider banners={banners} /> : <Hero product={featured[0] ?? newArrivals[0]} />}
-      <ProductSection title="New arrivals" eyebrow="Just in" href="/category/new-arrivals" products={newArrivals} />
+      <ProductSection title="New arrivals" eyebrow="Just in" href="/shop" products={newArrivals} />
       <ProductSection title="Featured collection" eyebrow="Our picks" href="/shop?featured=true" products={featured} tinted />
       <ProductSection title="Best sellers" eyebrow="Loved by customers" href="/shop?sort=best-selling" products={bestSellers} />
       <PromoBanner />

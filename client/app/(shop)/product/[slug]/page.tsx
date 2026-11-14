@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductDetails } from "@/components/products/ProductDetails";
@@ -55,16 +54,6 @@ export default async function ProductPage({ params }: Props) {
         { "@type": "ListItem", position: 2, name: product.category.name, item: absoluteUrl(`/category/${product.category.slug}`) },
         { "@type": "ListItem", position: 3, name: product.name, item: absoluteUrl(`/product/${product.slug}`) },
       ] }} />
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-ink">Home</Link></li>
-          <li aria-hidden>/</li>
-          <li><Link href={`/category/${product.category.slug}`} className="hover:text-ink">{product.category.name}</Link></li>
-          <li aria-hidden>/</li>
-          <li aria-current="page" className="text-ink">{product.name}</li>
-        </ol>
-      </nav>
-
       <div className="grid gap-10 lg:grid-cols-2">
         <ProductGallery images={product.images} name={product.name} />
         <div className="space-y-5">

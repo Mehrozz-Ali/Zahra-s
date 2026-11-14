@@ -13,7 +13,7 @@ export function Hero({ product }: { product?: Product }) {
           <p className="mb-8 mt-5 max-w-md text-lg text-stone">Explore our latest women&apos;s collection.</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/shop" className="bg-ink px-8 py-3.5 text-sm uppercase tracking-widest text-ivory transition-colors hover:bg-rose-dark">Shop now</Link>
-            <Link href="/category/new-arrivals" className="border border-ink px-8 py-3.5 text-sm uppercase tracking-widest transition-colors hover:bg-ink hover:text-ivory">View collection</Link>
+            <Link href="/shop" className="border border-ink px-8 py-3.5 text-sm uppercase tracking-widest transition-colors hover:bg-ink hover:text-ivory">View collection</Link>
           </div>
         </div>
         {image && product && (

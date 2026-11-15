@@ -2,9 +2,11 @@ import rateLimit from "express-rate-limit";
 
 const limitMessage = (message: string) => ({ success: false, message, errors: [] });
 
+// Browsing is generous on purpose: on mobile networks in Pakistan many phones share one IP address.
+// Login, sign-up, ordering and order tracking have their own, much stricter limits below.
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 300,
+  limit: 1500,
   standardHeaders: "draft-7",
   legacyHeaders: false,
   message: limitMessage("Too many requests. Please try again in a few minutes."),

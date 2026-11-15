@@ -8,7 +8,13 @@ export async function connectDatabase(): Promise<void> {
   // Some networks refuse the DNS lookup that mongodb+srv:// needs when Node uses the default DNS server
   const dnsServers = env.MONGODB_DNS_SERVERS.split(",").map((s) => s.trim()).filter(Boolean);
   if (dnsServers.length > 0) dns.setServers(dnsServers);
-  await mongoose.connect(env.MONGODB_URI, { serverSelectionTimeoutMS: 10_000 });
+  await mongoose.connect(env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 10_000,
+    // Each server instance keeps at most this many connections open. On Vercel many instances can run at once,
+    // and the database plan only allows so many connections in total (500 on the free Atlas tier).
+    maxPoolSize: 10,
+    maxIdleTimeMS: 30_000,
+  });
   console.log(`MongoDB connected: ${mongoose.connection.host}/${mongoose.connection.name}`);
 }
 

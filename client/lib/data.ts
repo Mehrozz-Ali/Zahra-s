@@ -5,13 +5,17 @@ const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000
 // With the pass-through setup (NEXT_PUBLIC_API_URL=/api/v1) the server has to call the real API address itself
 const API_URL = PUBLIC_API_URL.startsWith("/") && process.env.API_PROXY_TARGET ? `${process.env.API_PROXY_TARGET.trim().replace(/\/+$/, "")}${PUBLIC_API_URL}` : PUBLIC_API_URL;
 
+/** How long shop data is reused before it is fetched again. Set to 0 to always show the newest data. */
+const PUBLIC_DATA_SECONDS = 60;
+
 /**
  * Server-side fetch for Server Components. Returns null if the API is down, so pages can show an empty state instead of crashing.
- * `no-store` means a newly published article shows up on the next page load.
+ * Responses are kept for 60 seconds, so a rush of visitors shares a few API calls instead of each page view hitting the database.
+ * The price is that a newly published or edited article can take up to a minute to appear in the shop.
  */
 async function serverFetch<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${API_URL}${path}`, { cache: "no-store" });
+    const res = await fetch(`${API_URL}${path}`, { next: { revalidate: PUBLIC_DATA_SECONDS } });
     return res.ok ? ((await res.json()) as ApiSuccess<T>).data : null;
   } catch {
     return null;

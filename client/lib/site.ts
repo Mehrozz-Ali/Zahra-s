@@ -8,7 +8,7 @@ export const SITE = {
   shippingFee: 250,
   deliveryTime: "3-5 working days",
   returnDays: 7,
-  email: "hello@example.com", // TODO before launch: your real contact details
+  email: "zahrasinfopk@gmail.com", // TODO before launch: your real contact details
   phone: "0306-9536999",
   address: "Your shop address, area, city", // TODO before launch: shown in the footer
   hours: "Monday to Saturday, 10am to 6pm (Pakistan time)", // TODO before launch: your real support hours

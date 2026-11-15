@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SITE } from "@/lib/site";
+import { getWhatsAppNumber, whatsAppLink } from "@/lib/whatsapp";
 
 const columns: Array<{ title: string; links: Array<[string, string]> }> = [
   { title: "Shop by", links: [["All suits", "/shop"], ["New arrivals", "/shop"], ["Orders", "/account/orders"], ["Profile", "/account"], ["Wishlist", "/wishlist"]] },
@@ -20,13 +21,17 @@ function Social({ href, label, children }: { href: string; label: string; childr
 }
 
 export function SiteFooter() {
+  const whatsApp = getWhatsAppNumber();
   return (
     <footer className="bg-sand/50">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-5 lg:py-16">
-        <div className="space-y-5 text-[0.95rem] leading-relaxed">
-          <p>We are located at {SITE.address}.</p>
-          <p>Call us: <a href={`tel:${SITE.phone.replace(/\s/g, "")}`} className={underlined}>{SITE.phone}</a></p>
-          <p>Email:<br /><a href={`mailto:${SITE.email}`} className={`${underlined} break-all`}>{SITE.email}</a></p>
+        <div>
+          <h2 className="mb-5 text-base font-bold uppercase">Contact us</h2>
+          <dl className="space-y-4 text-[0.95rem] leading-relaxed">
+            <div><dt className="font-medium">Address</dt><dd className="text-stone">{SITE.address}</dd></div>
+            <div><dt className="font-medium">Phone</dt><dd><a href={`tel:${SITE.phone.replace(/\s/g, "")}`} className={underlined}>{SITE.phone}</a></dd></div>
+            <div><dt className="font-medium">Email</dt><dd><a href={`mailto:${SITE.email}`} className={`${underlined} break-all`}>{SITE.email}</a></dd></div>
+          </dl>
         </div>
 
         {columns.map((col) => (

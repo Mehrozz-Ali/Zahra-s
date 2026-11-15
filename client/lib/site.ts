@@ -10,7 +10,7 @@ export const SITE = {
   returnDays: 7,
   email: "zahrasinfopk@gmail.com", // TODO before launch: your real contact details
   phone: "0306-9536999",
-  address: "Your shop address, area, city", // TODO before launch: shown in the footer
+  address: "25 Km Ferozpur Road, Lahore, Pakistan.", // TODO before launch: shown in the footer
   hours: "Monday to Saturday, 10am to 6pm (Pakistan time)", // TODO before launch: your real support hours
   instagramUrl: "https://www.facebook.com/share/1JKjwPfgj4/?mibextid=wwXIfr",
   facebookUrl: "https://www.instagram.com/zahras.us?srtk=ejRsa3N1OXpkY2Zm",

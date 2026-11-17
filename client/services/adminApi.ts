@@ -19,6 +19,11 @@ export const adminApi = api.injectEndpoints({
       transformResponse: (r: ApiSuccess<AdminOrderList>) => r.data,
       providesTags: ["Order"],
     }),
+    bookPostex: builder.mutation<AdminOrderDetail & { message: string }, string>({
+      query: (id) => ({ url: `/admin/orders/${id}/postex`, method: "POST" }),
+      transformResponse: (r: ApiSuccess<AdminOrderDetail>) => ({ ...r.data, message: r.message }),
+      invalidatesTags: ["Order"],
+    }),
     getAdminOrder: builder.query<AdminOrderDetail, string>({
       query: (id) => `/admin/orders/${id}`,
       transformResponse: (r: ApiSuccess<AdminOrderDetail>) => r.data,
@@ -49,6 +54,6 @@ export const adminApi = api.injectEndpoints({
 });
 
 export const {
-  useGetDashboardQuery, useGetAnalyticsQuery, useGetAdminOrdersQuery, useGetAdminOrderQuery, useUpdateOrderStatusMutation,
+  useGetDashboardQuery, useGetAnalyticsQuery, useGetAdminOrdersQuery, useGetAdminOrderQuery, useUpdateOrderStatusMutation, useBookPostexMutation,
   useGetAdminCustomersQuery, useGetAdminCustomerQuery, useSetCustomerActiveMutation,
 } = adminApi;

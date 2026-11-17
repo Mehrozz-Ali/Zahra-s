@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAnalytics, getCustomer, getDashboard, getOrder, listCustomers, listOrders, updateCustomerStatus, updateOrderStatus } from "../controllers/admin.controller";
+import { bookPostex, getAnalytics, getCustomer, getDashboard, getOrder, listCustomers, listOrders, updateCustomerStatus, updateOrderStatus } from "../controllers/admin.controller";
 import { adminOnly } from "../middleware/admin";
 import { protect } from "../middleware/auth";
 import { validate } from "../middleware/validate";
@@ -16,6 +16,7 @@ router.get("/analytics", validate({ query: adminAnalyticsQuerySchema }), getAnal
 router.get("/orders", validate({ query: adminOrdersQuerySchema }), listOrders);
 router.get("/orders/:id", validate({ params: idParamSchema }), getOrder);
 router.patch("/orders/:id/status", validate({ params: idParamSchema, body: updateOrderStatusSchema }), updateOrderStatus);
+router.post("/orders/:id/postex", validate({ params: idParamSchema }), bookPostex);
 
 router.get("/customers", validate({ query: adminCustomersQuerySchema }), listCustomers);
 router.get("/customers/:id", validate({ params: idParamSchema }), getCustomer);

@@ -6,7 +6,7 @@ const STAGES: OrderStatus[] = ["pending", "confirmed", "processing", "shipped", 
 const LABEL: Record<OrderStatus, string> = { pending: "Order placed", confirmed: "Confirmed", processing: "Processing", shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled" };
 
 /** Vertical progress list built from the order's status history. A cancelled order shows only what happened, ending in "Cancelled". */
-export function OrderTimeline({ order }: { order: Pick<Order, "orderStatus" | "statusHistory"> }) {
+export function OrderTimeline({ order }: { order: Pick<Order, "orderStatus" | "statusHistory"> & Partial<Pick<Order, "shipment">> }) {
   const reached = new Map(order.statusHistory.map((e) => [e.status, e.changedAt]));
   const stages = order.orderStatus === "cancelled" ? [...STAGES.filter((s) => reached.has(s)), "cancelled" as const] : STAGES;
 
@@ -35,6 +35,12 @@ export function OrderTimeline({ order }: { order: Pick<Order, "orderStatus" | "s
           </li>
         );
       })}
+      {order.shipment?.trackingNumber && order.orderStatus !== "cancelled" && (
+        <li className="ml-10 border-t border-sand pt-3 text-sm">
+          <span className="text-stone">Courier tracking number ({order.shipment.courier === "postex" ? "PostEx" : order.shipment.courier}): </span>
+          <span className="select-all font-medium tabular-nums">{order.shipment.trackingNumber}</span>
+        </li>
+      )}
     </ol>
   );
 }

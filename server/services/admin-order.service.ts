@@ -9,6 +9,7 @@ import type { AdminOrdersQuery, UpdateOrderStatusInput } from "../validations/ad
 import { releaseCoupon } from "./coupon.service";
 import { restoreStock } from "./inventory.service";
 import { cancelPaymentIntent, refund } from "./payment.service";
+import { isPostexConfigured } from "./postex.service";
 
 /**
  * The only moves an order can make. Delivered and cancelled are final.
@@ -65,7 +66,7 @@ export async function listAdminOrders(q: AdminOrdersQuery) {
 export async function getAdminOrder(id: string) {
   const order = await Order.findById(id).populate("user", "name email phone isActive createdAt");
   if (!order) throw ApiError.notFound("Order not found");
-  return { order, allowedTransitions: allowedTransitions(order), waitingForPayment: waitingForPayment(order) };
+  return { order, allowedTransitions: allowedTransitions(order), waitingForPayment: waitingForPayment(order), postexEnabled: isPostexConfigured() };
 }
 
 // ---------- Changing status ----------

@@ -410,3 +410,9 @@ These are ideas, **not built yet**:
 - **Track order:** `/track-order` (linked in the footer) finds an order by order number + the phone number used at checkout (`POST /api/v1/orders/track`, rate limited).
 - **Wishlist without an account:** hearts work for everyone. Guests' items are kept in the browser and are merged into the account at login (`POST /api/v1/wishlist/merge`); the wishlist page shows them through `POST /api/v1/wishlist/lookup`.
 - **Passwords:** every password field has a show/hide (eye) button.
+
+## PostEx courier booking (optional)
+
+Off by default. When `POSTEX_API_TOKEN` and `POSTEX_PICKUP_ADDRESS_CODE` are set in the **backend** environment, confirmed orders show a **Book with PostEx** button in the admin order page. Booking saves the tracking number on the order; customers see it on their order / Track order page and in the shipped email. Booking never marks the order as shipped by itself.
+
+The PostEx request fields live in one file, `server/services/postex.payload.ts`, and must be checked against PostEx's official Merchant API guide before the first real booking.

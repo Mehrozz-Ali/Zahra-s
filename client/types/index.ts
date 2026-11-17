@@ -305,6 +305,8 @@ export interface Order {
   statusHistory: Array<{ status: OrderStatus; note?: string; changedAt: string }>;
   /** Email left at checkout by a guest (no account) */
   contactEmail?: string;
+  /** Courier booking, once the store has booked the parcel */
+  shipment?: { courier: "postex"; trackingNumber: string; bookedAt: string };
   createdAt: string;
 }
 
@@ -433,6 +435,7 @@ export interface AdminOrderDetail {
   order: AdminOrder;
   allowedTransitions: OrderStatus[];
   waitingForPayment: boolean; // an unpaid card order: it can only be cancelled
+  postexEnabled: boolean; // false until the PostEx settings are added on the server
   refundFailed?: boolean;
 }
 

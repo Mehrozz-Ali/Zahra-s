@@ -96,6 +96,8 @@ export interface OrderEmailData {
   coupon?: { code: string };
   /** Guest orders have no account page, so links go to Track order instead */
   isGuest?: boolean;
+  /** Courier tracking number, when the order has been booked */
+  trackingNumber?: string;
 }
 
 const orderUrl = (o: OrderEmailData): string => (o.isGuest ? url(`/track-order?order=${encodeURIComponent(o.orderNumber)}`) : url(`/account/orders/${o._id}`));
@@ -129,10 +131,10 @@ export function orderConfirmationEmail(name: string, o: OrderEmailData): Rendere
 export function orderShippedEmail(name: string, o: OrderEmailData, note?: string): RenderedEmail {
   return {
     subject: `Order ${o.orderNumber} is on its way`,
-    text: `Hi ${firstName(name)},\n\nGood news: order ${o.orderNumber} has been shipped.${note?.trim() ? `\nCourier details: ${note.trim()}` : ""}\n\n${itemsText(o)}\n\n${paymentLine(o)}\nDelivering to: ${addressLines(o.shippingAddress).join(", ")}\n\nTrack your order: ${orderUrl(o)}${footerText}`,
+    text: `Hi ${firstName(name)},\n\nGood news: order ${o.orderNumber} has been shipped.${note?.trim() ? `\nCourier details: ${note.trim()}` : ""}${o.trackingNumber ? `\nTracking number: ${o.trackingNumber}` : ""}\n\n${itemsText(o)}\n\n${paymentLine(o)}\nDelivering to: ${addressLines(o.shippingAddress).join(", ")}\n\nTrack your order: ${orderUrl(o)}${footerText}`,
     html: layout("Your order is on its way", `Order ${o.orderNumber} has been shipped.`,
       p(`Hi ${escapeHtml(firstName(name))}, order <strong>${escapeHtml(o.orderNumber)}</strong> has been shipped. Estimated delivery: ${escapeHtml(STORE.delivery[o.deliveryMethod].estimate)}.`)
-      + noteBlock("Courier details", note) + itemsTable(o) + p(escapeHtml(paymentLine(o))) + addressBlock(o) + button(orderUrl(o), "Track your order")),
+      + noteBlock("Courier details", note) + noteBlock("Tracking number", o.trackingNumber) + itemsTable(o) + p(escapeHtml(paymentLine(o))) + addressBlock(o) + button(orderUrl(o), "Track your order")),
   };
 }
 

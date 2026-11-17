@@ -27,6 +27,10 @@ const schema = z.object({
   REDIS_URL: optionalString,
   ADMIN_EMAIL: optionalString,
   ADMIN_PASSWORD: optionalString,
+  // PostEx courier booking. Leave the token empty and the feature stays switched off.
+  POSTEX_API_TOKEN: optionalString,
+  POSTEX_PICKUP_ADDRESS_CODE: optionalString,
+  POSTEX_BASE_URL: z.string().default("https://api.postex.pk/services/integration/api/order"),
 });
 
 const parsed = schema.safeParse(process.env);

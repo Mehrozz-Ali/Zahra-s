@@ -1,6 +1,7 @@
 import * as analytics from "../services/analytics.service";
 import * as customers from "../services/admin-customer.service";
 import * as orders from "../services/admin-order.service";
+import { bookOrderWithPostex } from "../services/postex.service";
 import * as dashboardService from "../services/dashboard.service";
 import { asyncHandler } from "../utils/asyncHandler";
 import { sendSuccess } from "../utils/sendResponse";
@@ -24,6 +25,11 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   const { order, refundFailed } = await orders.updateOrderStatus(String(req.params.id), req.body as UpdateOrderStatusInput);
   const message = refundFailed ? "Order cancelled, but the automatic refund failed. Please refund the payment in Stripe." : `Order marked as ${order.orderStatus}`;
   sendSuccess(res, { ...(await orders.getAdminOrder(String(order._id))), refundFailed }, message);
+});
+
+export const bookPostex = asyncHandler(async (req, res) => {
+  const order = await bookOrderWithPostex(String(req.params.id));
+  sendSuccess(res, await orders.getAdminOrder(String(order._id)), `Booked with PostEx. Tracking number ${order.shipment?.trackingNumber}`);
 });
 
 export const listCustomers = asyncHandler(async (req, res) => {

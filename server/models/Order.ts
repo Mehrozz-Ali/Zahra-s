@@ -34,6 +34,13 @@ export interface IStatusEvent {
   changedAt: Date;
 }
 
+/** Courier booking made from the admin screen. Missing until the order is booked. */
+export interface IShipment {
+  courier: "postex";
+  trackingNumber: string;
+  bookedAt: Date;
+}
+
 export interface IOrder {
   orderNumber: string;
   /** Missing for guest orders (checked out without an account) */
@@ -55,6 +62,9 @@ export interface IOrder {
   stripePaymentIntentId?: string;
   statusHistory: IStatusEvent[];
   inventoryRestored: boolean;
+  shipment?: IShipment;
+  /** Set while a courier booking is in progress, so two clicks can never book the same order twice */
+  shipmentLockedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -105,6 +115,11 @@ const orderSchema = new Schema<IOrder>(
       default: [],
     },
     inventoryRestored: { type: Boolean, default: false },
+    shipment: {
+      type: new Schema<IShipment>({ courier: { type: String, enum: ["postex"], required: true }, trackingNumber: { type: String, required: true }, bookedAt: { type: Date, default: Date.now } }, { _id: false }),
+      default: undefined,
+    },
+    shipmentLockedAt: { type: Date, select: false },
   },
   { timestamps: true },
 );

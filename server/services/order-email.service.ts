@@ -35,6 +35,7 @@ async function send(orderId: string, event: OrderEmailEvent): Promise<void> {
     subtotal: order.subtotal, discount: order.discount, shippingCost: order.shippingCost, tax: order.tax, total: order.total,
     coupon: order.coupon ? { code: order.coupon.code } : undefined,
     isGuest: !order.user,
+    trackingNumber: order.shipment?.trackingNumber,
   };
   const email: RenderedEmail =
     event.kind === "confirmation" ? orderConfirmationEmail(user.name, data)

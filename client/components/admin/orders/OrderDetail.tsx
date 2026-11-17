@@ -9,7 +9,7 @@ import { OrderStatusSelect } from "@/components/admin/orders/OrderStatusSelect";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { getErrorMessage } from "@/lib/errors";
 import { formatPrice } from "@/lib/format";
-import { useGetAdminOrderQuery, useUpdateOrderStatusMutation } from "@/services/adminApi";
+import { useBookPostexMutation, useGetAdminOrderQuery, useUpdateOrderStatusMutation } from "@/services/adminApi";
 import type { OrderStatus } from "@/types";
 
 const ACTION: Record<OrderStatus, { label: string; confirm?: string }> = {
@@ -25,6 +25,7 @@ const when = (iso: string) => new Date(iso).toLocaleString("en-PK", { day: "nume
 export function OrderDetail({ id }: { id: string }) {
   const { data, isLoading, error, refetch } = useGetAdminOrderQuery(id, { refetchOnMountOrArgChange: true });
   const [update, { isLoading: saving }] = useUpdateOrderStatusMutation();
+  const [bookPostex, { isLoading: booking }] = useBookPostexMutation();
   const [note, setNote] = useState("");
   const [choice, setChoice] = useState<OrderStatus | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
@@ -35,7 +36,8 @@ export function OrderDetail({ id }: { id: string }) {
     return <p role="alert" className="bg-red-50 p-5 text-red-800">{missing ? "This order does not exist." : getErrorMessage(error, "The order could not be loaded.")} {missing ? <Link href="/admin/orders" className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Back to orders</Link> : <button type="button" onClick={() => refetch()} className="ml-2 inline-flex h-10 items-center justify-center gap-1.5 whitespace-nowrap border border-ink px-4 text-sm transition-colors hover:bg-ink hover:text-ivory disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink">Try again</button>}</p>;
   }
 
-  const { order, allowedTransitions, waitingForPayment } = data;
+  const { order, allowedTransitions, waitingForPayment, postexEnabled } = data;
+  const canBook = postexEnabled && !order.shipment && (order.orderStatus === "confirmed" || order.orderStatus === "processing") && !waitingForPayment;
   const a = order.shippingAddress;
 
   const move = async (status: OrderStatus) => {
@@ -47,6 +49,17 @@ export function OrderDetail({ id }: { id: string }) {
       setNote("");
       setChoice(null);
       setMessage({ ok: !result.refundFailed, text: result.message });
+    } catch (e) {
+      setMessage({ ok: false, text: getErrorMessage(e) });
+    }
+  };
+
+  const book = async () => {
+    if (!window.confirm(`Book ${order.orderNumber} with PostEx? ${order.paymentMethod === "cod" && order.paymentStatus !== "paid" ? `The courier will collect ${formatPrice(order.total)} from the customer.` : "No cash will be collected."}`)) return;
+    setMessage(null);
+    try {
+      const result = await bookPostex(id).unwrap();
+      setMessage({ ok: true, text: result.message });
     } catch (e) {
       setMessage({ ok: false, text: getErrorMessage(e) });
     }
@@ -125,6 +138,27 @@ export function OrderDetail({ id }: { id: string }) {
               </div>
             )}
           </section>
+
+          {(order.shipment || postexEnabled) && (
+            <section aria-labelledby="courier-h" className="border border-sand bg-white p-5 text-sm">
+              <h2 id="courier-h" className="mb-3 font-sans text-lg font-semibold">Courier</h2>
+              {order.shipment ? (
+                <>
+                  <p>Booked with <span className="font-medium">PostEx</span> on {when(order.shipment.bookedAt)}.</p>
+                  <p className="mt-1 text-stone">Tracking number</p>
+                  <p className="select-all font-medium tabular-nums">{order.shipment.trackingNumber}</p>
+                  <p className="mt-2 text-xs text-stone">Customers see this number on their order page and in the shipped email. Mark the order as shipped when the parcel is handed over.</p>
+                </>
+              ) : canBook ? (
+                <>
+                  <p className="mb-3 text-stone">Send this order to PostEx and save the tracking number.</p>
+                  <button type="button" onClick={book} disabled={booking} className="h-11 w-full bg-ink px-4 text-sm uppercase tracking-widest text-ivory hover:bg-rose-dark disabled:cursor-not-allowed disabled:opacity-50">{booking ? "Booking..." : "Book with PostEx"}</button>
+                </>
+              ) : (
+                <p className="text-stone">{order.orderStatus === "delivered" || order.orderStatus === "cancelled" || order.orderStatus === "shipped" ? "This order can no longer be booked here." : "Confirm the order first, then it can be booked with PostEx."}</p>
+              )}
+            </section>
+          )}
 
           <section aria-labelledby="cust-h" className="border border-sand bg-white p-5 text-sm">
             <h2 id="cust-h" className="mb-3 font-sans text-lg font-semibold">Customer</h2>

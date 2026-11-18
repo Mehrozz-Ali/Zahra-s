@@ -14,9 +14,12 @@
     "seed:reset": "tsx seed/index.ts --reset",
     "seed:fresh": "tsx seed/index.ts --fresh",
     "seed:prod": "node dist/seed/index.js",
-    "make-admin": "tsx scripts/makeAdmin.ts"
+    "make-admin": "tsx scripts/makeAdmin.ts",
+    "email:test": "tsx scripts/email-test.ts",
+    "postex:mock": "tsx scripts/postex-mock.ts"
   },
   "dependencies": {
+    "@vercel/functions": "^3.11.3",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.11.0",
     "cookie-parser": "^1.4.7",
